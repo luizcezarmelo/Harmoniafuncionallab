@@ -1,751 +1,1988 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LABORATÓRIO HARMONIA FUNCIONAL</title>
-    
-    <!-- FIREBASE CDNS -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HARMONIA FUNCIONAL</title>
 
-    <style>
-        :root {
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #cbd5e1;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
-        }
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+<style>
+:root{
+  --blue:#0a6ed1;--blue2:#0854a0;--shell:#354a5f;--bg:#f5f6f7;--text:#32363a;
+  --muted:#6a6d70;--border:#d9d9d9;--green:#107e3e;--red:#bb0000;--orange:#e9730c;
+  --shadow:0 1px 4px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%;font-family:"72","72full",Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg);font-size:14px}
+body{overflow-x:hidden}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
 
-        header {
-            background-color: var(--card); border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-        }
-        header h1 { font-size: 1.25rem; color: var(--primary-dark); }
+#login{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:20px;
+  background:linear-gradient(135deg,#354a5f 0%,#243746 48%,#0a6ed1 100%)}
+.login-card{width:min(410px,100%);background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.28);overflow:hidden}
+.login-head{background:var(--shell);color:#fff;padding:24px}
+.login-head h1{font-size:20px;font-weight:600}
+.login-head p{margin-top:6px;opacity:.8;font-size:12px}
+.login-body{padding:24px}
+.field{display:block;margin-bottom:14px}
+.field>span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+input,select,textarea{width:100%;min-height:38px;border:1px solid #89919a;border-radius:4px;padding:8px 10px;background:#fff;color:var(--text)}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:var(--blue)}
+button{min-height:36px;border:1px solid var(--blue);border-radius:7px;background:#fff;color:var(--blue);padding:0 14px;font-weight:600}
+button:hover{background:#eaf3fc}
+button.primary{background:var(--blue);color:#fff}
+button.primary:hover{background:var(--blue2)}
+button.danger{color:var(--red);border-color:var(--red)}
+button.icon{border:0;background:transparent;padding:0 8px}
+button:disabled{opacity:.55;cursor:wait}
+#login-error{color:var(--red);font-size:13px;margin-top:8px}
 
-        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 2rem; }
+.shell{min-height:100vh}
+.topbar{height:48px;position:sticky;top:0;z-index:20;background:var(--shell);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 18px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-icon{width:26px;height:26px;border-radius:5px;background:var(--blue);display:grid;place-items:center;font-weight:700}
+.brand-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;gap:2px}
+.top-actions button{color:#fff;border-color:transparent;background:transparent}
+.top-actions button:hover{background:rgba(255,255,255,.1)}
+.tabs{position:sticky;top:48px;z-index:19;height:46px;background:#fff;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 8px}
+.tabs button{min-height:46px;border:0;border-bottom:3px solid transparent;border-radius:0;white-space:nowrap;color:var(--text);background:transparent}
+.tabs button.active{color:var(--blue);border-bottom-color:var(--blue)}
+main{max-width:1280px;margin:auto;padding:18px}
+h2{font-size:20px;font-weight:400;margin:3px 0 14px}
+h3{font-size:16px;font-weight:600}
+.card{background:#fff;border-radius:8px;box-shadow:0 0 0 1px var(--border),var(--shadow);padding:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.tile{min-height:92px}
+.tile small{color:var(--muted);font-size:12px}
+.tile strong{display:block;margin-top:7px;font-size:24px;font-weight:400}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar input,.toolbar select{flex:1;min-width:180px}
+.table-wrap{background:#fff;border-radius:8px;box-shadow:0 0 0 1px var(--border);overflow:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;background:#f5f6f7;color:var(--muted);font-size:12px;padding:11px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid #e5e5e5;vertical-align:middle}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr:focus{background:#f5faff;outline:none}
+tbody tr:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.status{display:inline-block;padding:2px 8px;border-radius:5px;border:1px solid;font-size:12px;font-weight:600;white-space:nowrap;margin:1px 2px 1px 0}
+.status.gray{color:#5b738b;border-color:#5b738b;background:#f5f6f7}
+.status.orange{color:var(--orange);border-color:var(--orange);background:#fff8e6}
+.status.blue{color:var(--blue);border-color:var(--blue);background:#eaf3fc}
+.status.green{color:var(--green);border-color:var(--green);background:#f1fdf6}
+.status.red{color:var(--red);border-color:var(--red);background:#ffebeb}
+.actions{display:flex;gap:5px;justify-content:flex-end}
+.actions button{min-height:30px;padding:0 9px;font-size:12px}
 
-        .card {
-            background-color: var(--card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 2rem; width: 100%; max-width: 400px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-        .card h2 { margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center; }
+dialog{border:0;border-radius:12px;padding:0;width:min(900px,96vw);max-height:92vh;box-shadow:0 12px 45px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog[open]{display:flex;flex-direction:column}
+.dialog-head{min-height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 18px;border-bottom:1px solid var(--border)}
+.dialog-body{padding:18px;overflow:auto}
+.dialog-foot{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;border-top:1px solid var(--border);background:#fafafa}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.full{grid-column:1/-1}
+.section{display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px;font-weight:600}
+.item-row,.payment-row{display:grid;gap:7px;align-items:center;margin-bottom:7px}
+.item-row{grid-template-columns:3fr 2fr 70px 120px 34px}
+.payment-row{grid-template-columns:1fr 130px 150px 34px}
+.total-box{text-align:right;padding:12px 0;font-size:15px}
+.total-box b{font-size:16px}
+#toast{position:fixed;z-index:100;left:50%;bottom:25px;transform:translateX(-50%);background:#32363a;color:#fff;border-radius:7px;padding:11px 18px;box-shadow:0 4px 15px rgba(0,0,0,.25)}
 
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.4rem; font-size: 0.875rem; font-weight: 600; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
-            border-radius: 4px; font-size: 1rem; background: #fff; text-transform: uppercase;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
-        }
+@media(max-width:700px){
+  .topbar{padding-left:10px}
+  .brand-title{font-size:13px}
+  main{padding:10px}
+  .tiles{grid-template-columns:repeat(2,1fr);gap:8px}
+  .tile{padding:12px;min-height:82px}
+  .tile strong{font-size:20px}
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tbody tr{padding:8px 0;border-bottom:1px solid var(--border)}
+  td{border:0;padding:4px 12px;display:flex;justify-content:space-between;gap:15px;text-align:right}
+  td::before{content:attr(data-label);color:var(--muted);text-align:left;font-size:12px}
+  dialog,dialog[open]{width:100%;max-width:none;height:100dvh;max-height:100dvh;border-radius:0}
+  .item-row{grid-template-columns:1fr 1fr 34px}
+  .item-row input:nth-child(1),.item-row input:nth-child(2){grid-column:1/-1}
+  .payment-row{grid-template-columns:1fr 34px}
+  .payment-row input:first-child{grid-column:1/-1}
+  .payment-row select{grid-column:1}
+  .toolbar{flex-direction:column}
+  .toolbar input,.toolbar select,.toolbar button{width:100%}
+}
 
-        button {
-            padding: 0.75rem 1rem; background-color: var(--primary); color: white;
-            border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { background-color: var(--primary-dark); }
-        button:disabled { background-color: var(--border); cursor: not-allowed; }
-        .btn-danger { background-color: var(--danger); }
-        .btn-danger:hover { background-color: #dc2626; }
-        .btn-success { background-color: var(--success); }
-        .btn-success:hover { background-color: #16a34a; }
-        .btn-secondary { background-color: #64748b; }
-        .btn-secondary:hover { background-color: #475569; }
+/* ---------- MAIÚSCULAS / VALIDAÇÃO ---------- */
+input:not([type=password]):not([type=date]):not([data-mask=email]),textarea,select{text-transform:uppercase}
+td{text-transform:uppercase}
+td[data-label="E-MAIL"]{text-transform:none}
+input.invalid{border-color:var(--red);outline-color:var(--red);background:#fff5f5}
 
-        .error-msg { color: var(--danger); font-size: 0.875rem; margin-top: 0.75rem; text-align: center; display: none; }
+/* ---------- RELATÓRIO ---------- */
+.rpt{overflow-x:auto}
+.rpt h4{margin:18px 0 8px;font-size:14px}
+.rpt .num{text-align:right;white-space:nowrap}
+.rpt tbody tr{cursor:default}
+.rpt tbody tr:hover{background:none}
+.rpt tfoot td{font-weight:700;background:#f5f6f7}
+@media(max-width:700px){
+  .rpt table{display:table}
+  .rpt thead{display:table-header-group}
+  .rpt tbody{display:table-row-group}
+  .rpt tfoot{display:table-footer-group}
+  .rpt tr{display:table-row;padding:0;border:0}
+  .rpt th,.rpt td{display:table-cell;border-bottom:1px solid #e5e5e5;padding:8px;text-align:left;white-space:nowrap}
+  .rpt td::before{content:none}
+  .rpt .num{text-align:right}
+}
 
-        #app-container { display: none; width: 100%; max-width: 1300px; margin: 0 auto; padding: 1.5rem; align-self: flex-start; }
-
-        .nav-tabs {
-            display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border);
-            margin-bottom: 2rem; padding-bottom: 0.5rem; flex-wrap: wrap; background: #fff; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border);
-        }
-        .nav-tabs button {
-            background: none; color: var(--text); border: none; font-weight: 600;
-            padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;
-        }
-        .nav-tabs button.active { background-color: var(--primary); color: white; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; }
-        @media(max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
-
-        table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
-        th { background-color: #f1f5f9; font-weight: 600; }
-        tr:last-child td { border-bottom: none; }
-
-        .action-btns { display: flex; gap: 0.3rem; flex-wrap: wrap; }
-        .action-btns button { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
-
-        .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
-        .badge-recebido { background-color: #e2e8f0; color: #475569; }
-        .badge-prova { background-color: #fef08a; color: #854d0e; }
-        .badge-acabamento { background-color: #fed7aa; color: #9a3412; }
-        .badge-concluido { background-color: #bbf7d0; color: #166534; }
-        .badge-entregue { background-color: #bae6fd; color: #0369a1; }
-        .badge-pago { background-color: #dcfce7; color: #15803d; }
-        .badge-pendente { background-color: #fee2e2; color: #b91c1c; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgb(0 0 0 / 0.1); }
-        .stat-card h4 { font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem; }
-        .stat-card p { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); }
-
-        @media print {
-            body * { visibility: hidden; }
-            #print-section, #print-section * { visibility: visible; }
-            #print-section { position: absolute; left: 0; top: 0; width: 100%; background: white; padding: 2rem; }
-            header, .nav-tabs, form, .action-btns, button { display: none !important; }
-        }
-
-        .print-box { background: white; border: 1px solid var(--border); padding: 2rem; border-radius: 8px; max-width: 800px; margin: 0 auto; }
-        .print-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-        .print-header h2 { color: var(--primary-dark); font-size: 1.5rem; }
-    </style>
+/* ---------- IMPRESSÃO ---------- */
+#print-area{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body>*{display:none!important}
+  #print-area{display:block!important}
+  @page{size:A4;margin:12mm}
+  .print-page{color:#111;font-family:Arial,Helvetica,sans-serif;font-size:11px}
+  .print-header{background:#354a5f;color:#fff;padding:14px;margin-bottom:15px}
+  .print-header h1{font-size:18px;margin-bottom:5px}
+  .print-header p{font-size:9px}
+  .print-title{font-size:16px;font-weight:bold;margin:12px 0}
+  .print-info{width:100%;border-collapse:collapse;margin-bottom:15px}
+  .print-info td{border:0;padding:3px;display:table-cell}
+  .print-info td:first-child{width:35mm;font-weight:bold}
+  .print-items{width:100%;border-collapse:collapse}
+  .print-items th{background:#0a6ed1;color:#fff;padding:7px}
+  .print-items td{padding:7px;border:1px solid #ddd;display:table-cell}
+  .print-total{margin-left:auto;width:75mm;margin-top:12px}
+  .print-total div{display:flex;justify-content:space-between;padding:3px;font-weight:bold}
+  .print-signatures{display:flex;justify-content:space-between;margin-top:65px}
+  .signature{width:70mm;text-align:center;border-top:1px solid #111;padding-top:5px}
+  .print-page{text-transform:uppercase}
+  .rpt{overflow:visible}
+  .rpt table{width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:14px}
+  .rpt th{background:#0a6ed1;color:#fff;padding:5px}
+  .rpt td{padding:5px;border:1px solid #ddd;display:table-cell}
+  .rpt td::before{content:none}
+  .rpt tr{page-break-inside:avoid}
+  .rpt tfoot td{background:#eee}
+  .rpt h4{font-size:12px}
+}
+</style>
 </head>
+
 <body>
 
-    <header>
-        <h1>LABORATÓRIO HARMONIA FUNCIONAL</h1>
-        <div id="user-status" style="display: none;">
-            <button id="btn-logout" class="btn-secondary" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">SAIR DO SISTEMA</button>
-        </div>
-    </header>
+<div id="login">
+  <div class="login-card">
+    <div class="login-head">
+      <h1>LABORATÓRIO HARMONIA FUNCIONAL</h1>
+      <p>GESTÃO DE ORDENS DE SERVIÇO</p>
+    </div>
+    <div class="login-body">
+      <label class="field">
+        <span>SENHA</span>
+        <input id="password" type="password" autocomplete="current-password" autofocus>
+      </label>
+      <div id="login-error" hidden></div>
+      <button id="login-button" class="primary" style="width:100%;margin-top:8px">ENTRAR</button>
+    </div>
+  </div>
+</div>
 
-    <main>
-        <!-- TELA DE LOGIN -->
-        <div id="login-card" class="card">
-            <h2>ACESSO RESTRITO</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="senha-unica">SENHA DE ACESSO</label>
-                    <input type="password" id="senha-unica" placeholder="DIGITE A SENHA MESTRE" required>
-                </div>
-                <button type="submit" id="btn-entrar" style="width: 100%;">ENTRAR NO SISTEMA</button>
-                <div id="login-error" class="error-msg">SENHA INCORRETA.</div>
-            </form>
-        </div>
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">H</div>
+      <div class="brand-title">LABORATÓRIO HARMONIA FUNCIONAL</div>
+    </div>
+    <div class="top-actions">
+      <button data-action="config">⚙ DADOS</button>
+      <button data-action="logout">SAIR</button>
+    </div>
+  </header>
+  <nav id="tabs" class="tabs"></nav>
+  <main id="content"></main>
+</div>
 
-        <!-- PAINEL PRINCIPAL -->
-        <div id="app-container">
-            <div class="nav-tabs">
-                <button class="tab-btn active" onclick="switchTab('dashboard')">PAINEL GERAL</button>
-                <button class="tab-btn" onclick="switchTab('os')">ORDENS DE SERVIÇO</button>
-                <button class="tab-btn" onclick="switchTab('orcamentos')">ORÇAMENTOS</button>
-                <button class="tab-btn" onclick="switchTab('clientes')">DENTISTAS & CLIENTES</button>
-                <button class="tab-btn" onclick="switchTab('financeiro')">FINANCEIRO DETALHADO</button>
-            </div>
+<dialog id="dialog"></dialog>
+<div id="toast" hidden></div>
+<div id="print-area"></div>
 
-            <!-- TAB 1: DASHBOARD -->
-            <div id="tab-dashboard" class="tab-content active">
-                <div class="stats-grid">
-                    <div class="stat-card"><h4>FATURAMENTO TOTAL</h4><p id="dash-fat">R$ 0,00</p></div>
-                    <div class="stat-card"><h4>VALORES A RECEBER</h4><p id="dash-pend">R$ 0,00</p></div>
-                    <div class="stat-card"><h4>OS EM ANDAMENTO</h4><p id="dash-ativas">0</p></div>
-                    <div class="stat-card"><h4>DENTISTAS CADASTRADOS</h4><p id="dash-cli">0</p></div>
-                </div>
-                <div class="card" style="max-width: 100%;">
-                    <h3 style="margin-bottom: 1rem;">BEM-VINDO AO SISTEMA PROFISSIONAL</h3>
-                    <p style="color: var(--text-light); line-height: 1.6;">SISTEMA INTEGRADO COM FIREBASE CLOUD FIRESTORE. NUMERAÇÃO DE OS AUTOMÁTICA E PROTEÇÃO CONTRA DUPLO CLIQUE ATIVAS.</p>
-                </div>
-            </div>
+<script>
+/* =========================================================
+   FIREBASE
+========================================================= */
+firebase.initializeApp({
+  apiKey: "AIzaSyBQ8wnANHOVRE_HIgSWKunpv751BoPr9sc",
+  authDomain: "harmoniafuncional-fa6d8.firebaseapp.com",
+  databaseURL: "https://harmoniafuncional-fa6d8-default-rtdb.firebaseio.com",
+  projectId: "harmoniafuncional-fa6d8",
+  storageBucket: "harmoniafuncional-fa6d8.firebasestorage.app",
+  messagingSenderId: "454696393035",
+  appId: "1:454696393035:web:4cec553f592da2804cb0ce"
+});
 
-            <!-- TAB 2: ORDENS DE SERVIÇO -->
-            <div id="tab-os" class="tab-content">
-                <div class="grid-2">
-                    <div class="card" style="max-width: 100%; height: fit-content;">
-                        <h2 id="os-form-title" style="font-size: 1.2rem; text-align: left;">NOVA ORDEM DE SERVIÇO</h2>
-                        <form id="os-form">
-                            <input type="hidden" id="os-id">
-                            <div class="form-group">
-                                <label for="os-numero">NÚMERO DA OS (AUTOMÁTICO)</label>
-                                <input type="text" id="os-numero" readonly style="background: #e2e8f0; font-weight: bold;" placeholder="GERANDO...">
-                            </div>
-                            <div class="form-group">
-                                <label for="os-dentista">DENTISTA SOLICITANTE</label>
-                                <select id="os-dentista" required><option value="">SELECIONE...</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="os-paciente">NOME DO PACIENTE</label>
-                                <input type="text" id="os-paciente" required placeholder="NOME COMPLETO">
-                            </div>
-                            <div class="form-group">
-                                <label for="os-tipo">TIPO DE PRÓTESE / TRABALHO</label>
-                                <input type="text" id="os-tipo" required placeholder="EX: PRÓTESE TOTAL SUPERIOR">
-                            </div>
-                            <div class="form-group">
-                                <label for="os-cor">COR E DENTES ENVOLVIDOS</label>
-                                <input type="text" id="os-cor" placeholder="EX: A2, DENTES 11 AO 21">
-                            </div>
-                            <div class="form-group">
-                                <label for="os-valor">VALOR DO SERVIÇO (R$)</label>
-                                <input type="number" step="0.01" id="os-valor" required placeholder="0.00">
-                            </div>
-                            <div class="form-group">
-                                <label for="os-pagamento">STATUS DO PAGAMENTO</label>
-                                <select id="os-pagamento" required>
-                                    <option value="PENDENTE">PENDENTE</option>
-                                    <option value="PAGO">PAGO</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="os-status">ETAPA ATUAL NO LABORATÓRIO</label>
-                                <select id="os-status" required>
-                                    <option value="RECEBIDO">RECEBIDO</option>
-                                    <option value="EM PROVA">EM PROVA</option>
-                                    <option value="EM ACABAMENTO">EM ACABAMENTO</option>
-                                    <option value="CONCLUÍDO">CONCLUÍDO</option>
-                                    <option value="ENTREGUE">ENTREGUE</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="os-previsao">PREVISÃO DE ENTREGA</label>
-                                <input type="date" id="os-previsao" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="os-obs">OBSERVAÇÕES TÉCNICAS</label>
-                                <textarea id="os-obs" rows="2" placeholder="DETALHES TÉCNICOS"></textarea>
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button type="submit" style="flex: 1;" id="btn-salvar-os">SALVAR OS</button>
-                                <button type="button" class="btn-danger" id="btn-cancelar-os" style="display: none; width: auto;" onclick="limparOS()">CANCELAR</button>
-                            </div>
-                        </form>
-                    </div>
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-                    <div>
-                        <h3 style="margin-bottom: 1rem;">CONTROLE DE ORDENS DE SERVIÇO</h3>
-                        <div style="overflow-x: auto;">
-                            <table id="tabela-os">
-                                <thead>
-                                    <tr>
-                                        <th>OS / PACIENTE</th>
-                                        <th>DENTISTA</th>
-                                        <th>TRABALHO / PREVISÃO</th>
-                                        <th>STATUS / PAGAMENTO</th>
-                                        <th>AÇÕES</th>
-                                    </tr>
-                                </thead>
-                                <tbody><tr><td colspan="5" style="text-align: center;">CARREGANDO...</td></tr></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+/* Trabalho offline (falha silenciosa se não suportado ou se outra aba já ativou) */
+db.enablePersistence({synchronizeTabs:true}).catch(err=>{
+  console.warn("Persistência offline indisponível:",err.code);
+});
 
-            <!-- TAB 3: ORÇAMENTOS -->
-            <div id="tab-orcamentos" class="tab-content">
-                <div class="grid-2">
-                    <div class="card" style="max-width: 100%; height: fit-content;">
-                        <h2 style="font-size: 1.2rem; text-align: left;">GERAR ORÇAMENTO</h2>
-                        <form id="orcamento-form">
-                            <div class="form-group">
-                                <label for="orc-dentista">DENTISTA / CLIENTE</label>
-                                <select id="orc-dentista" required><option value="">SELECIONE...</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="orc-paciente">NOME DO PACIENTE</label>
-                                <input type="text" id="orc-paciente" required placeholder="NOME DO PACIENTE">
-                            </div>
-                            <div class="form-group">
-                                <label for="orc-descricao">DESCRIÇÃO DETALHADA DO TRABALHO</label>
-                                <textarea id="orc-descricao" rows="3" required placeholder="DESCRIÇÃO"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="orc-valor">VALOR TOTAL (R$)</label>
-                                <input type="number" step="0.01" id="orc-valor" required placeholder="0.00">
-                            </div>
-                            <div class="form-group">
-                                <label for="orc-validade">VALIDADE DA PROPOSTA (DIAS)</label>
-                                <input type="number" id="orc-validade" value="15" required>
-                            </div>
-                            <button type="button" class="btn-success" style="width: 100%;" onclick="gerarOrcamentoVisual()">VISUALIZAR / IMPRIMIR ORÇAMENTO</button>
-                        </form>
-                    </div>
+const LOGIN_EMAIL = "admin@harmoniafuncional.local";
 
-                    <div>
-                        <div id="print-section">
-                            <div class="print-box">
-                                <div class="print-header">
-                                    <h2>LABORATÓRIO HARMONIA FUNCIONAL</h2>
-                                    <p style="font-size: 0.85rem; color: var(--text-light);">PRÓTESE DENTÁRIA DE ALTA PRECISÃO</p>
-                                </div>
-                                <h3 style="text-align: center; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--primary);">ORÇAMENTO DE TRABALHO</h3>
-                                <div style="margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.6;">
-                                    <p><strong>DENTISTA RESPONSÁVEL:</strong> <span id="view-orc-dentista">-</span></p>
-                                    <p><strong>PACIENTE:</strong> <span id="view-orc-paciente">-</span></p>
-                                    <p><strong>DATA DE EMISSÃO:</strong> <span id="view-orc-data">-</span></p>
-                                    <p><strong>VALIDADE:</strong> <span id="view-orc-validade">-</span> DIAS</p>
-                                </div>
-                                <table style="margin-bottom: 1.5rem;">
-                                    <thead>
-                                        <tr><th>DESCRIÇÃO DOS SERVIÇOS</th><th style="text-align: right;">VALOR</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td id="view-orc-desc">PREENCHA OS DADOS AO LADO.</td>
-                                            <td id="view-orc-val" style="text-align: right;">R$ 0,00</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-bottom: 2rem;">
-                                    TOTAL: <span id="view-orc-total" style="color: var(--primary-dark);">R$ 0,00</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light); border-top: 1px solid var(--border); pt: 1rem;">
-                                    <span>ASSINATURA DO LABORATÓRIO</span>
-                                    <span>APROVAÇÃO DO DENTISTA</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 1rem; text-align: right;">
-                            <button class="btn-secondary" onclick="window.print()">IMPRIMIR / SALVAR PDF</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+const $ = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 
-            <!-- TAB 4: CLIENTES / DENTISTAS -->
-            <div id="tab-clientes" class="tab-content">
-                <div class="grid-2">
-                    <div class="card" style="max-width: 100%; height: fit-content;">
-                        <h2 id="cli-form-title" style="font-size: 1.2rem; text-align: left;">NOVO DENTISTA</h2>
-                        <form id="dentista-form">
-                            <input type="hidden" id="dentista-id">
-                            <div class="form-group">
-                                <label for="nome">NOME DO DENTISTA</label>
-                                <input type="text" id="nome" required placeholder="EX: DR. CARLOS SILVA">
-                            </div>
-                            <div class="form-group">
-                                <label for="cro">CRO</label>
-                                <input type="text" id="cro" required placeholder="EX: CRO-CE 1234">
-                            </div>
-                            <div class="form-group">
-                                <label for="telefone">TELEFONE / WHATSAPP</label>
-                                <input type="text" id="telefone" placeholder="(85) 99999-9999">
-                            </div>
-                            <div class="form-group">
-                                <label for="endereco">ENDEREÇO DA CLÍNICA</label>
-                                <textarea id="endereco" rows="2" placeholder="ENDEREÇO COMPLETO"></textarea>
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button type="submit" style="flex: 1;" id="btn-salvar-cli">SALVAR DENTISTA</button>
-                                <button type="button" class="btn-danger" id="btn-cancelar-cli" style="display: none; width: auto;" onclick="limparCLI()">CANCELAR</button>
-                            </div>
-                        </form>
-                    </div>
+const esc = value =>
+  String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 
-                    <div>
-                        <h3 style="margin-bottom: 1rem;">DENTISTAS CADASTRADOS</h3>
-                        <table id="tabela-dentistas">
-                            <thead>
-                                <tr><th>NOME / CRO</th><th>CONTATO</th><th>AÇÕES</th></tr>
-                            </thead>
-                            <tbody><tr><td colspan="3" style="text-align: center;">CARREGANDO...</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+const today = () =>
+  new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
 
-            <!-- TAB 5: FINANCEIRO -->
-            <div id="tab-financeiro" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">RELATÓRIO FINANCEIRO COMPLETO</h2>
-                <div class="stats-grid">
-                    <div class="stat-card"><h4>FATURAMENTO GERAL</h4><p id="fin-fat">R$ 0,00</p></div>
-                    <div class="stat-card"><h4>RECEBIDO (PAGO)</h4><p id="fin-pago">R$ 0,00</p></div>
-                    <div class="stat-card"><h4>A RECEBER (PENDENTE)</h4><p id="fin-pend">R$ 0,00</p></div>
-                </div>
-                <div class="card" style="max-width: 100%; margin-top: 1.5rem;">
-                    <h3 style="margin-bottom: 1rem;">RESUMO DE PAGAMENTOS POR OS</h3>
-                    <div style="overflow-x: auto;">
-                        <table id="tabela-financeiro">
-                            <thead>
-                                <tr><th>OS / PACIENTE</th><th>DENTISTA</th><th>VALOR</th><th>STATUS PAGAMENTO</th></tr>
-                            </thead>
-                            <tbody><tr><td colspan="4" style="text-align: center;">CARREGANDO...</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+const dateBR = value => value ? value.split("-").reverse().join("/") : "-";
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBQ8wnANHOVRE_HIgSWKunpv751BoPr9sc",
-            authDomain: "harmoniafuncional-fa6d8.firebaseapp.com",
-            projectId: "harmoniafuncional-fa6d8",
-            storageBucket: "harmoniafuncional-fa6d8.firebasestorage.app",
-            messagingSenderId: "454696393035",
-            appId: "1:454696393035:web:4cec553f592da2804cb0ce"
-        };
+const money = c =>
+  (Number(c||0)/100).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const SYSTEM_EMAIL = "admin@harmoniafuncional.local";
+/* Aceita "1.500", "1.500,00", "1500,5", "1500.50" */
+const cents = value => {
+  let v = String(value ?? "").trim();
+  if(!v) return 0;
 
-        let cacheDentistas = [];
-        let proximoNumeroOS = 1;
+  if(v.includes(",")){
+    v = v.replace(/\./g,"").replace(",",".");
+  }else if(/^\d{1,3}(\.\d{3})+$/.test(v)){
+    v = v.replace(/\./g,""); // ponto como separador de milhar
+  }
+  return Math.round(parseFloat(v)*100) || 0;
+};
 
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                document.getElementById('login-card').style.display = 'none';
-                document.getElementById('app-container').style.display = 'block';
-                document.getElementById('user-status').style.display = 'block';
-                carregarDentistas();
-                carregarOS();
-            } else {
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('user-status').style.display = 'none';
-                document.getElementById('login-card').style.display = 'block';
-            }
-        });
+const moneyInput = value => (Number(value||0)/100).toFixed(2).replace(".",",");
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const senha = document.getElementById('senha-unica').value;
-            const errorDiv = document.getElementById('login-error');
-            const btn = document.getElementById('btn-entrar');
-            errorDiv.style.display = 'none';
-            btn.textContent = 'AUTENTICANDO...';
-            btn.disabled = true;
-            try {
-                await auth.signInWithEmailAndPassword(SYSTEM_EMAIL, senha);
-            } catch (err) {
-                errorDiv.textContent = "SENHA INCORRETA OU ERRO DE CONEXÃO.";
-                errorDiv.style.display = 'block';
-                btn.textContent = 'ENTRAR NO SISTEMA';
-                btn.disabled = false;
-            }
-        });
+/* =========================================================
+   MÁSCARAS, MAIÚSCULAS E VALIDAÇÕES
+========================================================= */
+const digits = v => String(v ?? "").replace(/\D/g,"");
 
-        document.getElementById('btn-logout').addEventListener('click', async () => {
-            await auth.signOut();
-        });
+function maskPhone(v){
+  const d = digits(v).slice(0,11);
+  if(!d) return "";
+  if(d.length<=2) return "("+d;
+  if(d.length<=6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+  if(d.length<=10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+}
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
+function maskCPF(v){
+  const d = digits(v).slice(0,11);
+  let out = d.slice(0,3);
+  if(d.length>3) out += "."+d.slice(3,6);
+  if(d.length>6) out += "."+d.slice(6,9);
+  if(d.length>9) out += "-"+d.slice(9,11);
+  return out;
+}
 
-        // DENTISTAS
-        const dentistaForm = document.getElementById('dentista-form');
-        dentistaForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btnSalvar = document.getElementById('btn-salvar-cli');
-            btnSalvar.disabled = true;
-            btnSalvar.textContent = 'SALVANDO...';
+function validCPF(v){
+  const d = digits(v);
+  if(d.length!==11 || /^(\d)\1{10}$/.test(d)) return false;
+  for(let t=9;t<11;t++){
+    let s = 0;
+    for(let i=0;i<t;i++) s += Number(d[i])*(t+1-i);
+    if((s*10)%11%10 !== Number(d[t])) return false;
+  }
+  return true;
+}
 
-            const id = document.getElementById('dentista-id').value;
-            const dados = {
-                nome: document.getElementById('nome').value.toUpperCase(),
-                cro: document.getElementById('cro').value.toUpperCase(),
-                telefone: document.getElementById('telefone').value.toUpperCase(),
-                endereco: document.getElementById('endereco').value.toUpperCase()
-            };
-            try {
-                if (id) {
-                    await db.collection('dentistas').doc(id).update(dados);
-                } else {
-                    dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('dentistas').add(dados);
-                }
-                limparCLI();
-                carregarDentistas();
-            } catch(err) { 
-                alert("ERRO AO SALVAR: " + err.message); 
-            } finally {
-                btnSalvar.disabled = false;
-                btnSalvar.textContent = id ? 'ATUALIZAR' : 'SALVAR DENTISTA';
-            }
-        });
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-        function carregarDentistas() {
-            db.collection('dentistas').orderBy('nome').onSnapshot(snap => {
-                const tbody = document.querySelector('#tabela-dentistas tbody');
-                tbody.innerHTML = '';
-                cacheDentistas = [];
-                const selOS = document.getElementById('os-dentista');
-                const selOrc = document.getElementById('orc-dentista');
-                selOS.innerHTML = '<option value="">SELECIONE...</option>';
-                selOrc.innerHTML = '<option value="">SELECIONE...</option>';
+const MASK_RULES = {
+  email:{test:v=>EMAIL_RE.test(v), msg:"E-MAIL INVÁLIDO. USE O FORMATO NOME@DOMINIO.COM."},
+  cpf:{test:validCPF, msg:"CPF INVÁLIDO."},
+  phone:{test:v=>[10,11].includes(digits(v).length), msg:"TELEFONE INVÁLIDO. INFORME DDD + NÚMERO."}
+};
 
-                if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center;">NENHUM DENTISTA CADASTRADO.</td></tr>`;
-                    document.getElementById('dash-cli').textContent = '0';
-                    return;
-                }
+const MASK_ATTRS = {
+  phone:'data-mask="phone" inputmode="tel" maxlength="15" placeholder="(00) 00000-0000"',
+  cpf:'data-mask="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00"',
+  email:'data-mask="email" inputmode="email" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="nome@dominio.com"'
+};
 
-                document.getElementById('dash-cli').textContent = snap.size;
-                snap.forEach(doc => {
-                    const d = doc.data();
-                    cacheDentistas.push({ id: doc.id, nome: d.nome });
-                    
-                    [selOS, selOrc].forEach(sel => {
-                        const opt = document.createElement('option');
-                        opt.value = doc.id; opt.textContent = `${d.nome} (${d.cro})`;
-                        sel.appendChild(opt);
-                    });
+const MASK_FNS = {phone:maskPhone, cpf:maskCPF};
 
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${d.nome}</strong><br><small style="color:var(--text-light);">${d.cro}</small></td>
-                        <td>${d.telefone || '-'}<br><small style="color:var(--text-light);">${d.endereco || ''}</small></td>
-                        <td><div class="action-btns">
-                            <button type="button" onclick="editarCLI('${doc.id}', '${d.nome}', '${d.cro}', '${d.telefone || ''}', '${d.endereco || ''}')">EDITAR</button>
-                            <button type="button" class="btn-danger" onclick="excluirCLI('${doc.id}')">EXCLUIR</button>
-                        </div></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
+/* Aplica a máscara mantendo o cursor na mesma posição (contada em dígitos) */
+function setMasked(el,fn){
+  const pos = el.selectionStart ?? el.value.length;
+  const before = digits(el.value.slice(0,pos)).length;
+  el.value = fn(el.value);
+  let p = 0;
+  if(before>0){
+    let c = 0;
+    for(p=0;p<el.value.length;p++){
+      if(/\d/.test(el.value[p])) c++;
+      if(c===before){ p++; break; }
+    }
+  }
+  try{ el.setSelectionRange(p,p); }catch{}
+}
 
-        window.editarCLI = function(id, nome, cro, telefone, endereco) {
-            document.getElementById('dentista-id').value = id;
-            document.getElementById('nome').value = nome;
-            document.getElementById('cro').value = cro;
-            document.getElementById('telefone').value = telefone;
-            document.getElementById('endereco').value = endereco;
-            document.getElementById('cli-form-title').textContent = 'EDITAR DENTISTA';
-            document.getElementById('btn-salvar-cli').textContent = 'ATUALIZAR';
-            document.getElementById('btn-cancelar-cli').style.display = 'block';
-        }
+/* Tudo que o usuário digita vira MAIÚSCULA (exceto senha, datas, números e e-mail) */
+function normalizeInput(el){
 
-        function limparCLI() {
-            dentistaForm.reset();
-            document.getElementById('dentista-id').value = '';
-            document.getElementById('cli-form-title').textContent = 'NOVO DENTISTA';
-            document.getElementById('btn-salvar-cli').textContent = 'SALVAR DENTISTA';
-            document.getElementById('btn-cancelar-cli').style.display = 'none';
-        }
+  if(!el.matches?.("input,textarea") || el.readOnly) return;
+  if(["password","date","number","checkbox","radio","button"].includes(el.type)) return;
 
-        window.excluirCLI = async function(id) {
-            if(confirm('EXCLUIR ESTE DENTISTA?')) await db.collection('dentistas').doc(id).delete();
-        }
+  el.classList.remove("invalid");
 
-        // ORDENS DE SERVIÇO
-        const osForm = document.getElementById('os-form');
-        osForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btnSalvarOS = document.getElementById('btn-salvar-os');
-            btnSalvarOS.disabled = true;
-            btnSalvarOS.textContent = 'SALVANDO...';
+  const mask = el.dataset.mask;
 
-            const id = document.getElementById('os-id').value;
-            const dentistaId = document.getElementById('os-dentista').value;
-            const dentistaObj = cacheDentistas.find(d => d.id === dentistaId);
-            const numeroOS = document.getElementById('os-numero').value;
-            
-            const dados = {
-                numero: numeroOS,
-                dentistaId,
-                dentistaNome: dentistaObj ? dentistaObj.nome : 'DESCONHECIDO',
-                paciente: document.getElementById('os-paciente').value.toUpperCase(),
-                tipo: document.getElementById('os-tipo').value.toUpperCase(),
-                cor: document.getElementById('os-cor').value.toUpperCase(),
-                valor: parseFloat(document.getElementById('os-valor').value) || 0,
-                pagamento: document.getElementById('os-pagamento').value.toUpperCase(),
-                status: document.getElementById('os-status').value.toUpperCase(),
-                previsao: document.getElementById('os-previsao').value,
-                obs: document.getElementById('os-obs').value.toUpperCase()
-            };
+  if(MASK_FNS[mask]) return setMasked(el,MASK_FNS[mask]);
 
-            try {
-                if (id) {
-                    await db.collection('ordens_servico').doc(id).update(dados);
-                } else {
-                    dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('ordens_servico').add(dados);
-                }
-                limparOS();
-                carregarOS();
-            } catch(err) { 
-                alert("ERRO AO SALVAR OS: " + err.message); 
-            } finally {
-                btnSalvarOS.disabled = false;
-                btnSalvarOS.textContent = id ? 'ATUALIZAR OS' : 'SALVAR OS';
-            }
-        });
+  if(mask==="email"){
+    const pos = el.selectionStart ?? el.value.length;
+    const clean = el.value.replace(/\s/g,"").toLowerCase();
+    if(clean!==el.value){
+      const keep = el.value.slice(0,pos).replace(/\s/g,"").length;
+      el.value = clean;
+      try{ el.setSelectionRange(keep,keep); }catch{}
+    }
+    return;
+  }
 
-        function carregarOS() {
-            db.collection('ordens_servico').orderBy('criadoEm', 'desc').onSnapshot(snap => {
-                const tbody = document.querySelector('#tabela-os tbody');
-                const tbodyFin = document.querySelector('#tabela-financeiro tbody');
-                tbody.innerHTML = '';
-                tbodyFin.innerHTML = '';
+  const start = el.selectionStart, end = el.selectionEnd;
+  const upper = el.value.toUpperCase();
+  if(upper!==el.value){
+    el.value = upper;
+    try{ el.setSelectionRange(start,end); }catch{}
+  }
+}
 
-                let fat = 0, pend = 0, ativas = 0, pago = 0;
-                let maiorNum = 0;
+function validateField(el){
+  const rule = MASK_RULES[el.dataset.mask];
+  const v = el.value.trim();
+  const ok = !rule || !v || rule.test(v);
+  el.classList.toggle("invalid",!ok);
+  return ok;
+}
 
-                if (snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">NENHUMA OS REGISTRADA.</td></tr>`;
-                    tbodyFin.innerHTML = `<tr><td colspan="4" style="text-align: center;">NENHUM REGISTRO FINANCEIRO.</td></tr>`;
-                    atualizarFinanceiroEStats(0, 0, 0, 0);
-                    proximoNumeroOS = 1;
-                    document.getElementById('os-numero').value = '001/2026';
-                    return;
-                }
+function validateDialogMasks(){
+  for(const el of $$("[data-mask]",dialog)){
+    if(!validateField(el)){
+      toast(MASK_RULES[el.dataset.mask].msg);
+      el.focus();
+      return false;
+    }
+  }
+  return true;
+}
 
-                snap.forEach(doc => {
-                    const os = doc.data();
-                    fat += os.valor || 0;
-                    if (os.pagamento === 'PENDENTE') pend += os.valor || 0;
-                    else pago += os.valor || 0;
-                    if (os.status !== 'ENTREGUE') ativas++;
+function addDays(iso,n){
+  if(!iso) return "";
+  const [y,m,d] = iso.split("-").map(Number);
+  const dt = new Date(y,m-1,d+n);
+  return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+}
 
-                    // Descobrir maior número para autoincremento
-                    if (os.numero) {
-                        const partes = os.numero.split('/');
-                        const numInt = parseInt(partes[0]) || 0;
-                        if (numInt > maiorNum) maiorNum = numInt;
-                    }
+const timestamp = () => firebase.firestore.FieldValue.serverTimestamp();
 
-                    const badgeSt = getBadge(os.status);
-                    const badgePg = os.pagamento === 'PAGO' ? 'badge-pago' : 'badge-pendente';
+function toast(message){
+  const el = $("#toast");
+  el.textContent = message;
+  el.hidden = false;
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>{ el.hidden = true; },3500);
+}
 
-                    // Tabela OS
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>OS: ${os.numero}</strong><br><small>PAC: ${os.paciente}</small></td>
-                        <td>${os.dentistaNome}</td>
-                        <td>${os.tipo}<br><small style="color:var(--text-light);">PREV: ${os.previsao || '-'}</small></td>
-                        <td><span class="badge ${badgeSt}">${os.status}</span><br><span class="badge ${badgePg}" style="margin-top:2px;">R$ ${os.valor.toFixed(2)} (${os.pagamento})</span></td>
-                        <td><div class="action-btns">
-                            <button type="button" onclick="editarOS('${doc.id}', '${os.numero}', '${os.dentistaId}', '${os.paciente}', '${os.tipo}', '${os.cor || ''}', ${os.valor}, '${os.pagamento}', '${os.status}', '${os.previsao}', '${os.obs || ''}')">EDITAR</button>
-                            <button type="button" class="btn-danger" onclick="excluirOS('${doc.id}')">EXCLUIR</button>
-                        </div></td>
-                    `;
-                    tbody.appendChild(tr);
+function status(text,type){
+  return `<span class="status ${type}">${esc(text)}</span>`;
+}
 
-                    // Tabela Financeiro
-                    const trFin = document.createElement('tr');
-                    trFin.innerHTML = `
-                        <td><strong>OS: ${os.numero}</strong> - ${os.paciente}</td>
-                        <td>${os.dentistaNome}</td>
-                        <td><strong>R$ ${os.valor.toFixed(2)}</strong></td>
-                        <td><span class="badge ${badgePg}">${os.pagamento}</span></td>
-                    `;
-                    tbodyFin.appendChild(trFin);
-                });
+const STATUS_OS = ["RECEBIDO","EM PROVA","EM ACABAMENTO","CONCLUÍDO","ENTREGUE"];
+const STATUS_ORC = ["ABERTO","APROVADO","RECUSADO"];
+const PAYMENT_TYPES = ["PIX","DINHEIRO","CARTÃO","TRANSFERÊNCIA","BOLETO"];
 
-                atualizarFinanceiroEStats(fat, pend, ativas, pago);
+function osStatus(value){
+  const map = {
+    "RECEBIDO":"gray","EM PROVA":"orange","EM ACABAMENTO":"blue",
+    "CONCLUÍDO":"green","ENTREGUE":"green"
+  };
+  return status(value,map[value]||"gray");
+}
 
-                // Definir próximo número automático se não estiver editando
-                if (!document.getElementById('os-id').value) {
-                    const proximo = maiorNum + 1;
-                    const anoAtual = new Date().getFullYear();
-                    document.getElementById('os-numero').value = String(proximo).padStart(3, '0') + '/' + anoAtual;
-                }
-            });
-        }
+/* Usa o mesmo cálculo de normalizeOrder e mostra o atraso mesmo em pagamento parcial */
+function paymentStatus(o){
+  if(o.statusPagamento==="PAGO") return status("PAGO","green");
+  let html = o.statusPagamento==="PARCIAL"
+    ? status("PARCIAL","orange")
+    : status("PENDENTE","gray");
+  if(o.atrasado) html += status("VENCIDO","red");
+  return html;
+}
 
-        function getBadge(st) {
-            if(st === 'RECEBIDO') return 'badge-recebido';
-            if(st === 'EM PROVA') return 'badge-prova';
-            if(st === 'EM ACABAMENTO') return 'badge-acabamento';
-            if(st === 'CONCLUÍDO') return 'badge-concluido';
-            return 'badge-entregue';
-        }
+/* =========================================================
+   ESTADO
+========================================================= */
+const initialState = () => ({
+  tab:"dashboard",
+  dentists:[],
+  orders:[],
+  quotes:[],
+  lab:{},
+  search:"",
+  filter:""
+});
 
-        window.editarOS = function(id, num, dentId, pac, tipo, cor, val, pg, st, prev, obs) {
-            document.getElementById('os-id').value = id;
-            document.getElementById('os-numero').value = num;
-            document.getElementById('os-dentista').value = dentId;
-            document.getElementById('os-paciente').value = pac;
-            document.getElementById('os-tipo').value = tipo;
-            document.getElementById('os-cor').value = cor;
-            document.getElementById('os-valor').value = val;
-            document.getElementById('os-pagamento').value = pg;
-            document.getElementById('os-status').value = st;
-            document.getElementById('os-previsao').value = prev;
-            document.getElementById('os-obs').value = obs;
-            document.getElementById('os-form-title').textContent = 'EDITAR ORDEM DE SERVIÇO';
-            document.getElementById('btn-salvar-os').textContent = 'ATUALIZAR OS';
-            document.getElementById('btn-cancelar-os').style.display = 'block';
-        }
+const state = initialState();
 
-        function limparOS() {
-            osForm.reset();
-            document.getElementById('os-id').value = '';
-            document.getElementById('os-form-title').textContent = 'NOVA ORdem de SERVIÇO';
-            document.getElementById('btn-salvar-os').textContent = 'SALVAR OS';
-            document.getElementById('btn-cancelar-os').style.display = 'none';
-            
-            // Recriar número automático
-            db.collection('ordens_servico').get().then(snap => {
-                let maiorNum = 0;
-                snap.forEach(doc => {
-                    const os = doc.data();
-                    if(os.numero) {
-                        const partes = os.numero.split('/');
-                        const numInt = parseInt(partes[0]) || 0;
-                        if(numInt > maiorNum) maiorNum = numInt;
-                    }
-                });
-                const proximo = maiorNum + 1;
-                const anoAtual = new Date().getFullYear();
-                document.getElementById('os-numero').value = String(proximo).padStart(3, '0') + '/' + anoAtual;
-            });
-        }
+let unsubscribers = [];
+const dialog = $("#dialog");
 
-        window.excluirOS = async function(id) {
-            if(confirm('EXCLUIR ESTA OS?')) await db.collection('ordens_servico').doc(id).delete();
-        }
+/* =========================================================
+   NORMALIZAÇÃO
+========================================================= */
+function normalizeOrder(o){
 
-        function atualizarFinanceiroEStats(fat, pend, ativas, pago) {
-            document.getElementById('dash-fat').textContent = `R$ ${fat.toFixed(2)}`;
-            document.getElementById('dash-pend').textContent = `R$ ${pend.toFixed(2)}`;
-            document.getElementById('dash-ativas').textContent = ativas;
+  if(!Array.isArray(o.itens)){
+    const value = Math.round(Number(o.valor||0)*100);
+    o.itens = [{descricao:o.tipo||"",cor:o.cor||"",quantidade:1,valor:value}];
+    o.pagamentos = o.pagamento==="PAGO"
+      ? [{data:o.previsao||today(),valor:value,forma:"PIX"}]
+      : [];
+  }
 
-            document.getElementById('fin-fat').textContent = `R$ ${fat.toFixed(2)}`;
-            document.getElementById('fin-pago').textContent = `R$ ${pago.toFixed(2)}`;
-            document.getElementById('fin-pend').textContent = `R$ ${pend.toFixed(2)}`;
-        }
+  o.pagamentos = Array.isArray(o.pagamentos)
+    ? o.pagamentos
+    : Array.isArray(o.pags) ? o.pags : [];
 
-        // ORÇAMENTO
-        window.gerarOrcamentoVisual = function() {
-            const dentId = document.getElementById('orc-dentista').value;
-            const dentObj = cacheDentistas.find(d => d.id === dentId);
-            const pac = document.getElementById('orc-paciente').value.toUpperCase();
-            const desc = document.getElementById('orc-descricao').value.toUpperCase();
-            const val = parseFloat(document.getElementById('orc-valor').value) || 0;
-            const validez = document.getElementById('orc-validade').value;
+  o.total = o.itens.reduce(
+    (sum,i)=>sum+(Number(i.quantidade||i.q||1)*Number(i.valor??i.v??0)),0
+  );
 
-            if(!dentObj || !pac || !desc) {
-                alert('PREENCHA TODOS OS CAMPOS DO ORÇAMENTO.');
-                return;
-            }
+  o.pago = o.pagamentos.reduce((sum,p)=>sum+Number(p.valor??p.v??0),0);
+  o.saldo = Math.max(o.total-o.pago,0);
 
-            document.getElementById('view-orc-dentista').textContent = dentObj.nome;
-            document.getElementById('view-orc-paciente').textContent = pac;
-            document.getElementById('view-orc-data').textContent = new Date().toLocaleDateString('pt-BR');
-            document.getElementById('view-orc-validade').textContent = validez;
-            document.getElementById('view-orc-desc').textContent = desc;
-            document.getElementById('view-orc-val').textContent = `R$ ${val.toFixed(2)}`;
-            document.getElementById('view-orc-total').textContent = `R$ ${val.toFixed(2)}`;
-            
-            alert('ORÇAMENTO GERADO COM SUCESSO! CLIQUE EM IMPRIMIR PARA GERAR O PDF.');
-        }
-    </script>
+  o.statusPagamento =
+    o.total>0 && o.saldo===0 ? "PAGO"
+    : o.pago>0 ? "PARCIAL"
+    : "PENDENTE";
+
+  o.atrasado = o.saldo>0 && !!o.vencimento && o.vencimento<today();
+
+  return o;
+}
+
+function dentistName(o){
+  const d = state.dentists.find(x=>x.id===o.dentistaId);
+  return d?.nome || o.dentistaNome || "-";
+}
+
+const createdTime = o => o.criadoEm?.toMillis?.() || 0;
+
+/* =========================================================
+   RENDER AGRUPADO (evita re-render em cascata)
+========================================================= */
+let renderQueued = false;
+
+function scheduleRender(){
+  if(renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(()=>{
+    renderQueued = false;
+    render();
+  });
+}
+
+/* =========================================================
+   LOGIN
+========================================================= */
+let authReady = false;
+
+function applyAuth(user){
+
+  $("#login").hidden = !!user;
+  $("#app").hidden = !user;
+
+  if(user){
+    startData();
+  }else{
+    stopData();
+    $("#password").value = "";
+    setTimeout(()=>{
+      const pw = $("#password");
+      if(pw){ pw.focus(); pw.select(); }
+    },50);
+  }
+}
+
+auth.onAuthStateChanged(user=>{
+  if(authReady) applyAuth(user);
+});
+
+/* Sessão NÃO é guardada: ao abrir ou recarregar a página, a senha é sempre pedida.
+   O signOut inicial também descarta sessões antigas salvas antes desta alteração. */
+(async()=>{
+  try{ await auth.setPersistence(firebase.auth.Auth.Persistence.NONE); }
+  catch(err){ console.warn("setPersistence:",err); }
+
+  try{ await auth.signOut(); }
+  catch(err){ console.warn("signOut inicial:",err); }
+
+  authReady = true;
+  applyAuth(auth.currentUser);
+})();
+
+async function doLogin(){
+
+  if(!authReady){ toast("AGUARDE UM INSTANTE..."); return; }
+
+  const button = $("#login-button");
+  const error = $("#login-error");
+  const password = $("#password").value;
+
+  error.hidden = true;
+  button.disabled = true;
+
+  try{
+    await auth.signInWithEmailAndPassword(LOGIN_EMAIL,password);
+  }catch(err){
+
+    console.error("ERRO DE LOGIN FIREBASE:",err);
+
+    const messages = {
+      "auth/invalid-api-key":"A CHAVE DA API DO FIREBASE ESTÁ INVÁLIDA.",
+      "auth/api-key-not-valid":"A CHAVE DA API DO FIREBASE ESTÁ INVÁLIDA.",
+      "auth/wrong-password":"SENHA INCORRETA.",
+      "auth/invalid-credential":"SENHA INCORRETA.",
+      "auth/user-not-found":"USUÁRIO NÃO ENCONTRADO NO FIREBASE AUTHENTICATION.",
+      "auth/unauthorized-domain":"DOMÍNIO NÃO AUTORIZADO NO FIREBASE (AUTHENTICATION > SETTINGS).",
+      "auth/too-many-requests":"MUITAS TENTATIVAS. AGUARDE UM POUCO.",
+      "auth/operation-not-allowed":"LOGIN POR E-MAIL/SENHA NÃO ESTÁ ATIVADO NO FIREBASE.",
+      "auth/network-request-failed":"SEM CONEXÃO COM A INTERNET."
+    };
+
+    error.textContent = messages[err.code] || ("ERRO DE LOGIN: "+(err.code||err.message));
+    error.hidden = false;
+
+  }finally{
+    button.disabled = false;
+  }
+}
+
+$("#login-button").addEventListener("click",doLogin);
+
+$("#password").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){ e.preventDefault(); doLogin(); }
+});
+
+/* =========================================================
+   DADOS
+========================================================= */
+function stopData(){
+  unsubscribers.forEach(fn=>fn());
+  unsubscribers = [];
+  Object.assign(state,initialState()); // limpa dados em memória ao sair
+  $("#content").innerHTML = "";
+}
+
+/* "estimate" evita criadoEm = null enquanto o servidor não confirma */
+const docData = d => ({id:d.id,...d.data({serverTimestamps:"estimate"})});
+
+function startData(){
+
+  stopData();
+
+  unsubscribers.push(
+    db.collection("dentistas").onSnapshot(snapshot=>{
+      state.dentists = snapshot.docs.map(docData);
+      state.dentists.sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
+      scheduleRender();
+    },handleFirebaseError)
+  );
+
+  unsubscribers.push(
+    db.collection("ordens_servico").onSnapshot(snapshot=>{
+      state.orders = snapshot.docs.map(docData);
+      state.orders.forEach(normalizeOrder);
+      state.orders.sort((a,b)=>createdTime(b)-createdTime(a));
+      scheduleRender();
+    },handleFirebaseError)
+  );
+
+  unsubscribers.push(
+    db.collection("orcamentos").onSnapshot(snapshot=>{
+      state.quotes = snapshot.docs.map(docData);
+      state.quotes.forEach(normalizeOrder);
+      state.quotes.sort((a,b)=>createdTime(b)-createdTime(a));
+      scheduleRender();
+    },handleFirebaseError)
+  );
+
+  unsubscribers.push(
+    db.doc("config/lab").onSnapshot(snapshot=>{
+      state.lab = snapshot.data()||{};
+    },handleFirebaseError)
+  );
+}
+
+function handleFirebaseError(err){
+  console.error(err);
+  toast("ERRO FIREBASE: "+err.message);
+}
+
+/* =========================================================
+   NUMERAÇÃO
+========================================================= */
+async function nextNumber(type){
+
+  const year = new Date().getFullYear();
+  const ref = db.doc("contadores/"+type+year);
+
+  const n = await db.runTransaction(async transaction=>{
+    const snapshot = await transaction.get(ref);
+    const current = snapshot.exists ? Number(snapshot.data().n||0) : 0;
+    const next = current+1;
+    transaction.set(ref,{n:next});
+    return next;
+  });
+
+  return String(n).padStart(3,"0")+"/"+year;
+}
+
+/* =========================================================
+   TABS
+========================================================= */
+const TABS = [
+  ["dashboard","PAINEL"],
+  ["orders","ORDENS DE SERVIÇO"],
+  ["quotes","ORÇAMENTOS"],
+  ["dentists","DENTISTAS"],
+  ["finance","FINANCEIRO"]
+];
+
+function renderTabs(){
+  $("#tabs").innerHTML = TABS.map(([id,label])=>
+    `<button class="${state.tab===id?"active":""}" data-action="tab" data-tab="${id}">${label}</button>`
+  ).join("");
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+function render(){
+
+  if(!auth.currentUser) return;
+
+  renderTabs();
+
+  const views = {
+    dashboard:renderDashboard,
+    orders:renderOrders,
+    quotes:renderQuotes,
+    dentists:renderDentists,
+    finance:renderFinance
+  };
+
+  $("#content").innerHTML = views[state.tab]();
+}
+
+/* Re-renderiza e mantém foco e cursor do campo de busca */
+function renderKeepingSearch(){
+
+  const scroll = window.scrollY;
+  const input = $("#search");
+  const pos = input ? input.selectionStart : null;
+
+  render();
+
+  const fresh = $("#search");
+  if(fresh && pos!==null){
+    fresh.focus();
+    fresh.setSelectionRange(pos,pos);
+  }
+  window.scrollTo(0,scroll);
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+function tile(label,value){
+  return `
+    <div class="card tile">
+      <small>${label}</small>
+      <strong>${value}</strong>
+    </div>`;
+}
+
+function sumOrders(fn){
+  return state.orders.reduce((s,o)=>s+fn(o),0);
+}
+
+function renderDashboard(){
+
+  const active = state.orders.filter(o=>o.status!=="ENTREGUE");
+  const late = active.filter(o=>o.previsao && o.previsao<today());
+
+  const next = active.slice()
+    .sort((a,b)=>(a.previsao||"9999")>(b.previsao||"9999")?1:-1)
+    .slice(0,8);
+
+  const billed = sumOrders(o=>o.total);
+  const received = sumOrders(o=>o.pago);
+  const receivable = sumOrders(o=>o.saldo);
+  const overdue = state.orders.filter(o=>o.atrasado).reduce((s,o)=>s+o.saldo,0);
+
+  return `
+    <h2>PAINEL GERAL</h2>
+
+    <div class="tiles">
+      ${tile("OS EM ANDAMENTO",active.length)}
+      ${tile("ENTREGAS ATRASADAS",late.length)}
+      ${tile("FATURADO",money(billed))}
+      ${tile("RECEBIDO",money(received))}
+      ${tile("A RECEBER",money(receivable))}
+      ${tile("VENCIDO",money(overdue))}
+      ${tile("DENTISTAS",state.dentists.length)}
+    </div>
+
+    <h2>PRÓXIMAS ENTREGAS</h2>
+    ${orderTable(next)}
+  `;
+}
+
+/* =========================================================
+   TABELAS
+========================================================= */
+function orderTable(list){
+
+  if(!list.length)
+    return `<div class="card empty">NENHUM REGISTRO ENCONTRADO.</div>`;
+
+  return `
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>OS</th><th>PACIENTE</th><th>DENTISTA</th><th>ENTREGA</th>
+        <th>ETAPA</th><th>TOTAL</th><th>PAGAMENTO</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${list.map(o=>`
+        <tr tabindex="0" data-action="edit" data-type="order" data-id="${o.id}">
+          <td data-label="OS"><b>${esc(o.numero)}</b></td>
+          <td data-label="PACIENTE">${esc(o.paciente)}</td>
+          <td data-label="DENTISTA">${esc(dentistName(o))}</td>
+          <td data-label="ENTREGA">
+            ${dateBR(o.previsao)}
+            ${o.previsao && o.previsao<today() && o.status!=="ENTREGUE" ? status("ATRASADA","red") : ""}
+          </td>
+          <td data-label="ETAPA">${osStatus(o.status)}</td>
+          <td data-label="TOTAL">${money(o.total)}</td>
+          <td data-label="PAGAMENTO">${paymentStatus(o)}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+  </div>`;
+}
+
+/* =========================================================
+   ORDENS
+========================================================= */
+function matchesSearch(o){
+  const text = (o.numero+" "+o.paciente+" "+dentistName(o)).toLowerCase();
+  return text.includes(state.search.toLowerCase());
+}
+
+function renderOrders(){
+
+  const filtered = state.orders.filter(o=>
+    matchesSearch(o) && (!state.filter || o.status===state.filter)
+  );
+
+  return `
+    <h2>ORDENS DE SERVIÇO</h2>
+
+    <div class="toolbar">
+      <input id="search" placeholder="BUSCAR..." value="${esc(state.search)}">
+
+      <select id="filter">
+        <option value="">TODAS AS ETAPAS</option>
+        ${STATUS_OS.map(s=>`<option ${state.filter===s?"selected":""}>${s}</option>`).join("")}
+      </select>
+
+      <button class="primary" data-action="new-order">+ NOVA OS</button>
+    </div>
+
+    ${orderTable(filtered)}
+  `;
+}
+
+/* =========================================================
+   ORÇAMENTOS
+========================================================= */
+function renderQuotes(){
+
+  const filtered = state.quotes.filter(o=>
+    matchesSearch(o) && (!state.filter || o.status===state.filter)
+  );
+
+  const toolbar = `
+    <h2>ORÇAMENTOS</h2>
+
+    <div class="toolbar">
+      <input id="search" placeholder="BUSCAR..." value="${esc(state.search)}">
+
+      <select id="filter">
+        <option value="">TODOS</option>
+        ${STATUS_ORC.map(s=>`<option ${state.filter===s?"selected":""}>${s}</option>`).join("")}
+      </select>
+
+      <button class="primary" data-action="new-quote">+ NOVO ORÇAMENTO</button>
+    </div>`;
+
+  if(!filtered.length)
+    return toolbar+`<div class="card empty">NENHUM REGISTRO ENCONTRADO.</div>`;
+
+  return toolbar+`
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº</th><th>PACIENTE</th><th>DENTISTA</th><th>DATA</th>
+            <th>VALIDADE</th><th>TOTAL</th><th>SITUAÇÃO</th>
+          </tr>
+        </thead>
+        <tbody>
+        ${filtered.map(o=>`
+          <tr tabindex="0" data-action="edit" data-type="quote" data-id="${o.id}">
+            <td data-label="Nº"><b>${esc(o.numero)}</b></td>
+            <td data-label="PACIENTE">${esc(o.paciente)}</td>
+            <td data-label="DENTISTA">${esc(dentistName(o))}</td>
+            <td data-label="DATA">${dateBR(o.data)}</td>
+            <td data-label="VALIDADE">${o.validade||30} DIAS CORRIDOS</td>
+            <td data-label="TOTAL">${money(o.total)}</td>
+            <td data-label="SITUAÇÃO">
+              ${status(o.status,
+                o.status==="APROVADO"?"green":o.status==="RECUSADO"?"red":"blue")}
+            </td>
+          </tr>
+        `).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+/* =========================================================
+   DENTISTAS
+========================================================= */
+function renderDentists(){
+
+  const list = state.dentists.filter(d=>
+    ((d.nome||"")+" "+(d.cro||"")+" "+(d.cpf||"")+" "+(d.telefone||""))
+      .toLowerCase().includes(state.search.toLowerCase())
+  );
+
+  return `
+    <h2>DENTISTAS E CLIENTES</h2>
+
+    <div class="toolbar">
+      <input id="search" placeholder="BUSCAR DENTISTA..." value="${esc(state.search)}">
+      <button class="primary" data-action="new-dentist">+ NOVO DENTISTA</button>
+    </div>
+
+    ${list.length ? `
+      <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>NOME</th><th>CRO</th><th>CPF</th><th>TELEFONE</th><th>E-MAIL</th><th>OS</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+        ${list.map(d=>`
+          <tr tabindex="0" data-action="edit-dentist" data-id="${d.id}">
+            <td data-label="NOME"><b>${esc(d.nome)}</b></td>
+            <td data-label="CRO">${esc(d.cro)}</td>
+            <td data-label="CPF">${esc(maskCPF(d.cpf))}</td>
+            <td data-label="TELEFONE">${esc(maskPhone(d.telefone))}</td>
+            <td data-label="E-MAIL">${esc(d.email)}</td>
+            <td data-label="OS">${state.orders.filter(o=>o.dentistaId===d.id).length}</td>
+            <td data-label="">
+              <div class="actions">
+                <button class="danger" data-action="delete-dentist" data-id="${d.id}">EXCLUIR</button>
+              </div>
+            </td>
+          </tr>
+        `).join("")}
+        </tbody>
+      </table>
+      </div>
+    ` : `<div class="card empty">NENHUM DENTISTA ENCONTRADO.</div>`}
+  `;
+}
+
+/* =========================================================
+   FINANCEIRO
+========================================================= */
+function renderFinance(){
+
+  const billed = sumOrders(o=>o.total);
+  const received = sumOrders(o=>o.pago);
+  const receivable = sumOrders(o=>o.saldo);
+  const overdue = state.orders.filter(o=>o.atrasado).reduce((s,o)=>s+o.saldo,0);
+
+  const list = state.orders.filter(o=>{
+    let filter = true;
+    if(state.filter==="VENCIDO") filter = o.atrasado;
+    else if(state.filter) filter = o.statusPagamento===state.filter;
+    return matchesSearch(o) && filter;
+  });
+
+  return `
+    <h2>FINANCEIRO</h2>
+
+    <div class="tiles">
+      ${tile("FATURADO",money(billed))}
+      ${tile("RECEBIDO",money(received))}
+      ${tile("A RECEBER",money(receivable))}
+      ${tile("VENCIDO",money(overdue))}
+    </div>
+
+    <div class="toolbar">
+      <input id="search" placeholder="BUSCAR OS OU PACIENTE..." value="${esc(state.search)}">
+
+      <select id="filter">
+        <option value="">TODOS</option>
+        ${["PENDENTE","PARCIAL","PAGO","VENCIDO"].map(s=>
+          `<option ${state.filter===s?"selected":""}>${s}</option>`
+        ).join("")}
+      </select>
+
+      <button class="primary" data-action="report">📊 RELATÓRIO</button>
+    </div>
+
+    ${list.length ? `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>OS / PACIENTE</th><th>DENTISTA</th><th>VENCIMENTO</th>
+            <th>TOTAL</th><th>PAGO</th><th>SALDO</th><th>STATUS</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+        ${list.map(o=>`
+          <tr tabindex="0" data-action="edit" data-type="order" data-id="${o.id}">
+            <td data-label="OS / PACIENTE"><b>${esc(o.numero)}</b> ${esc(o.paciente)}</td>
+            <td data-label="DENTISTA">${esc(dentistName(o))}</td>
+            <td data-label="VENCIMENTO">${dateBR(o.vencimento)}</td>
+            <td data-label="TOTAL">${money(o.total)}</td>
+            <td data-label="PAGO">${money(o.pago)}</td>
+            <td data-label="SALDO">${money(o.saldo)}</td>
+            <td data-label="STATUS">${paymentStatus(o)}</td>
+            <td data-label="">
+              ${o.saldo>0 ? `
+                <div class="actions">
+                  <button class="primary" data-action="receive" data-id="${o.id}">RECEBER</button>
+                </div>` : ""}
+            </td>
+          </tr>
+        `).join("")}
+        </tbody>
+      </table>
+    </div>
+    ` : `<div class="card empty">NENHUM REGISTRO ENCONTRADO.</div>`}
+  `;
+}
+
+/* =========================================================
+   FORM HELPERS
+========================================================= */
+function field(name,label,value="",type="text",extra=""){
+  return `
+    <label class="field">
+      <span>${label}</span>
+      <input data-field="${name}" type="${type}" value="${esc(value)}" ${extra}>
+    </label>`;
+}
+
+function selectField(name,label,options,value){
+  return `
+    <label class="field">
+      <span>${label}</span>
+      <select data-field="${name}">
+        ${options.map(o=>{
+          const val = typeof o==="string" ? o : o.value;
+          const text = typeof o==="string" ? o : o.text;
+          return `<option value="${esc(val)}" ${String(val)===String(value)?"selected":""}>${esc(text)}</option>`;
+        }).join("")}
+      </select>
+    </label>`;
+}
+
+function getField(name){
+  const el = $(`[data-field="${name}"]`,dialog);
+  if(!el) return "";
+  const v = el.value.trim();
+  if(el.dataset.mask==="email") return v.toLowerCase();
+  if(el.tagName==="SELECT" || ["date","number","password"].includes(el.type)) return v;
+  return v.toUpperCase();
+}
+
+function dentistOptions(){
+  return [
+    {value:"",text:"SELECIONE..."},
+    ...state.dentists.map(d=>({
+      value:d.id,
+      text:d.nome+(d.cro?" ("+d.cro+")":"")
+    }))
+  ];
+}
+
+/* =========================================================
+   ITENS E PAGAMENTOS
+========================================================= */
+function itemRow(item={}){
+  const unit = item.valor ?? item.v;
+  return `
+    <div class="item-row">
+      <input data-item="descricao" placeholder="DESCRIÇÃO" value="${esc(item.descricao||item.d||"")}">
+      <input data-item="cor" placeholder="COR / DENTES" value="${esc(item.cor||"")}">
+      <input data-item="quantidade" inputmode="numeric" value="${item.quantidade||item.q||1}">
+      <input data-item="valor" inputmode="decimal" placeholder="VALOR" value="${unit ? moneyInput(unit) : ""}">
+      <button class="icon" data-action="remove-row" type="button">✕</button>
+    </div>`;
+}
+
+function paymentRow(payment={}){
+  const value = payment.valor ?? payment.v;
+  return `
+    <div class="payment-row">
+      <input type="date" data-payment="data" value="${esc(payment.data||payment.dt||today())}">
+      <input data-payment="valor" inputmode="decimal" placeholder="VALOR" value="${value ? moneyInput(value) : ""}">
+      <select data-payment="forma">
+        ${PAYMENT_TYPES.map(f=>
+          `<option ${f===(payment.forma||payment.f)?"selected":""}>${f}</option>`
+        ).join("")}
+      </select>
+      <button class="icon" data-action="remove-row" type="button">✕</button>
+    </div>`;
+}
+
+function readItems(){
+  return $$(".item-row",dialog).map(row=>({
+    descricao:$('[data-item="descricao"]',row).value.trim().toUpperCase(),
+    cor:$('[data-item="cor"]',row).value.trim().toUpperCase(),
+    quantidade:parseInt($('[data-item="quantidade"]',row).value)||1,
+    valor:cents($('[data-item="valor"]',row).value)
+  })).filter(i=>i.descricao||i.valor);
+}
+
+function readPayments(){
+  return $$(".payment-row",dialog).map(row=>({
+    data:$('[data-payment="data"]',row).value||today(),
+    valor:cents($('[data-payment="valor"]',row).value),
+    forma:$('[data-payment="forma"]',row).value
+  })).filter(p=>p.valor);
+}
+
+function calculateDialog(){
+
+  const total = readItems().reduce((s,i)=>s+i.quantidade*i.valor,0);
+  const paid = readPayments().reduce((s,p)=>s+p.valor,0);
+  const balance = Math.max(total-paid,0);
+
+  const box = $("#dialog-total");
+
+  if(box){
+    box.innerHTML = `
+      TOTAL: <b>${money(total)}</b>
+      &nbsp;&nbsp;
+      PAGO: <b>${money(paid)}</b>
+      &nbsp;&nbsp;
+      SALDO: <b>${money(balance)}</b>`;
+  }
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+function openDialog(title,body,footer){
+
+  dialog.innerHTML = `
+    <div class="dialog-head">
+      <h3>${esc(title)}</h3>
+      <button class="icon" data-action="close-dialog" type="button">✕</button>
+    </div>
+    <div class="dialog-body">${body}</div>
+    <div class="dialog-foot">${footer}</div>`;
+
+  dialog.showModal();
+  calculateDialog();
+
+  const focus = $("input:not([readonly]),select,textarea",dialog);
+  if(focus) setTimeout(()=>focus.focus(),50);
+}
+
+/* =========================================================
+   FORM OS / ORÇAMENTO
+========================================================= */
+function openDocument(type,id=""){
+
+  const isOrder = type==="order";
+  const source = isOrder ? state.orders : state.quotes;
+  const old = id ? source.find(o=>o.id===id) : null;
+
+  const o = old || {
+    itens:[{quantidade:1}],
+    pagamentos:[],
+    status:isOrder ? "RECEBIDO" : "ABERTO",
+    validade:30
+  };
+
+  dialog.dataset.type = type;
+  dialog.dataset.id = id;
+
+  const top = isOrder
+    ? `
+      ${selectField("status","ETAPA",STATUS_OS,o.status)}
+      ${field("previsao","PREVISÃO DE ENTREGA",o.previsao,"date")}
+      ${field("vencimento","VENCIMENTO DO PAGAMENTO",o.vencimento,"date")}
+    `
+    : `
+      ${field("validade","VALIDADE (DIAS CORRIDOS)",o.validade||30,"number",'min="1"')}
+      ${selectField("status","SITUAÇÃO",STATUS_ORC,o.status)}
+    `;
+
+  const body = `
+    <div class="grid">
+      ${field("numero","NÚMERO",id?o.numero:"AUTOMÁTICO","text","readonly")}
+      ${selectField("dentistaId","DENTISTA",dentistOptions(),o.dentistaId)}
+      ${field("paciente","PACIENTE",o.paciente)}
+      ${field("cpfPaciente","CPF DO PACIENTE",maskCPF(o.cpfPaciente),"text",MASK_ATTRS.cpf)}
+      ${top}
+    </div>
+
+    <div class="section">
+      <span>ITENS DO TRABALHO</span>
+      <button class="icon" data-action="add-item" type="button">+ ITEM</button>
+    </div>
+
+    <div id="items">${o.itens.map(itemRow).join("")}</div>
+
+    ${isOrder ? `
+      <div class="section">
+        <span>PAGAMENTOS RECEBIDOS</span>
+        <button class="icon" data-action="add-payment" type="button">+ PAGAMENTO</button>
+      </div>
+      <div id="payments">${o.pagamentos.map(paymentRow).join("")}</div>
+    ` : ""}
+
+    <div id="dialog-total" class="total-box"></div>
+
+    <label class="field full">
+      <span>OBSERVAÇÕES</span>
+      <textarea data-field="observacoes" rows="3">${esc(o.observacoes||o.obs||"")}</textarea>
+    </label>`;
+
+  let footer = `
+    <button class="primary" data-action="save-document">SALVAR</button>
+    <button data-action="close-dialog">CANCELAR</button>`;
+
+  if(id){
+    footer += `
+      <button data-action="print" data-type="${type}" data-id="${id}">🖨 IMPRIMIR / PDF</button>`;
+
+    if(!isOrder && !o.osNum){
+      footer += `<button data-action="generate-order" data-id="${id}">GERAR OS</button>`;
+    }
+
+    footer += `
+      <button class="danger" data-action="delete" data-type="${type}" data-id="${id}">EXCLUIR</button>`;
+  }
+
+  openDialog((isOrder?"OS ":"ORÇAMENTO ")+(id?o.numero:"NOVO"),body,footer);
+}
+
+/* =========================================================
+   DENTISTA
+========================================================= */
+function openDentist(id=""){
+
+  const d = id ? state.dentists.find(x=>x.id===id) : {};
+
+  dialog.dataset.type = "dentist";
+  dialog.dataset.id = id;
+
+  const body = `
+    <div class="grid">
+      ${field("nome","NOME",d.nome)}
+      ${field("cro","CRO",d.cro)}
+      ${field("cpf","CPF DO DENTISTA",maskCPF(d.cpf),"text",MASK_ATTRS.cpf)}
+      ${field("telefone","TELEFONE / WHATSAPP",maskPhone(d.telefone),"text",MASK_ATTRS.phone)}
+      ${field("email","E-MAIL",d.email,"text",MASK_ATTRS.email)}
+
+      <label class="field full">
+        <span>ENDEREÇO DA CLÍNICA</span>
+        <textarea data-field="endereco" rows="3">${esc(d.endereco)}</textarea>
+      </label>
+    </div>`;
+
+  const footer = `
+    <button class="primary" data-action="save-dentist">SALVAR</button>
+    <button data-action="close-dialog">CANCELAR</button>
+    ${id ? `<button class="danger" data-action="delete-dentist" data-id="${id}">EXCLUIR</button>` : ""}`;
+
+  openDialog(id?"EDITAR DENTISTA":"NOVO DENTISTA",body,footer);
+}
+
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+function openConfig(){
+
+  const l = state.lab||{};
+
+  dialog.dataset.type = "config";
+  dialog.dataset.id = "";
+
+  const body = `
+    <div class="grid">
+      ${field("nome","NOME DO LABORATÓRIO",l.nome)}
+      ${field("cnpj","CNPJ",l.cnpj)}
+      ${field("telefone","TELEFONE / WHATSAPP",maskPhone(l.tel),"text",MASK_ATTRS.phone)}
+      ${field("endereco","ENDEREÇO",l.end)}
+    </div>`;
+
+  openDialog("DADOS DO LABORATÓRIO",body,`
+    <button class="primary" data-action="save-config">SALVAR</button>
+    <button data-action="close-dialog">CANCELAR</button>`);
+}
+
+/* =========================================================
+   RECEBER
+========================================================= */
+function openReceive(id){
+
+  const o = state.orders.find(x=>x.id===id);
+  if(!o) return;
+
+  dialog.dataset.type = "receive";
+  dialog.dataset.id = id;
+
+  openDialog(
+    "RECEBER — OS "+o.numero,
+    `
+      <div class="grid">
+        ${field("data","DATA",today(),"date")}
+        ${field("valor","VALOR (R$)",moneyInput(o.saldo))}
+        ${selectField("forma","FORMA",PAYMENT_TYPES,"PIX")}
+      </div>
+
+      <p style="color:var(--muted)">
+        SALDO EM ABERTO: <b>${money(o.saldo)}</b>
+      </p>`,
+    `
+      <button class="primary" data-action="save-payment">RECEBER</button>
+      <button data-action="close-dialog">CANCELAR</button>`
+  );
+}
+
+/* =========================================================
+   SALVAMENTO
+========================================================= */
+async function saveDocument(){
+
+  const type = dialog.dataset.type;
+  const id = dialog.dataset.id;
+  const isOrder = type==="order";
+
+  const dentistId = getField("dentistaId");
+  const patient = getField("paciente");
+  const items = readItems();
+
+  if(!dentistId || !patient || !items.length){
+    toast("INFORME DENTISTA, PACIENTE E AO MENOS UM ITEM.");
+    return;
+  }
+
+  if(!validateDialogMasks()) return;
+
+  const dentist = state.dentists.find(d=>d.id===dentistId);
+
+  const data = {
+    dentistaId:dentistId,
+    dentistaNome:dentist?.nome||"",
+    paciente:patient,
+    cpfPaciente:getField("cpfPaciente"),
+    status:getField("status"),
+    itens:items,
+    observacoes:getField("observacoes")
+  };
+
+  if(isOrder){
+    data.previsao = getField("previsao");
+    data.vencimento = getField("vencimento");
+    data.pagamentos = readPayments();
+  }else{
+    data.validade = parseInt(getField("validade"))||30;
+  }
+
+  const ref = db.collection(isOrder ? "ordens_servico" : "orcamentos");
+
+  if(id){
+    await ref.doc(id).update(data);
+  }else{
+    data.numero = await nextNumber(isOrder ? "os" : "orc");
+    data.data = today();
+    data.criadoEm = timestamp();
+    await ref.add(data);
+  }
+
+  dialog.close();
+  toast("SALVO COM SUCESSO");
+}
+
+async function saveDentist(){
+
+  const name = getField("nome");
+
+  if(!name){
+    toast("INFORME O NOME DO DENTISTA.");
+    return;
+  }
+
+  if(!validateDialogMasks()) return;
+
+  const data = {
+    nome:name,
+    cro:getField("cro"),
+    cpf:getField("cpf"),
+    telefone:getField("telefone"),
+    email:getField("email"),
+    endereco:getField("endereco")
+  };
+
+  const id = dialog.dataset.id;
+
+  if(id){
+    await db.collection("dentistas").doc(id).update(data);
+  }else{
+    data.criadoEm = timestamp();
+    await db.collection("dentistas").add(data);
+  }
+
+  dialog.close();
+  toast("DENTISTA SALVO");
+}
+
+async function saveConfig(){
+
+  if(!validateDialogMasks()) return;
+
+  await db.doc("config/lab").set({
+    nome:getField("nome"),
+    cnpj:getField("cnpj"),
+    tel:getField("telefone"),
+    end:getField("endereco")
+  });
+
+  dialog.close();
+  toast("DADOS DO LABORATÓRIO SALVOS");
+}
+
+/* arrayUnion evita sobrescrever pagamentos feitos em outra aba/dispositivo */
+async function savePayment(){
+
+  const id = dialog.dataset.id;
+  const order = state.orders.find(o=>o.id===id);
+  if(!order) return;
+
+  const value = cents(getField("valor"));
+
+  if(!value){
+    toast("INFORME O VALOR.");
+    return;
+  }
+
+  if(value>order.saldo){
+    toast("O VALOR NÃO PODE SER MAIOR QUE O SALDO.");
+    return;
+  }
+
+  const payment = {
+    data:getField("data")||today(),
+    valor:value,
+    forma:getField("forma")
+  };
+
+  await db.collection("ordens_servico").doc(id).update({
+    pagamentos:firebase.firestore.FieldValue.arrayUnion(payment)
+  });
+
+  dialog.close();
+  toast("PAGAMENTO REGISTRADO");
+}
+
+/* =========================================================
+   EXCLUSÃO
+========================================================= */
+async function deleteRecord(type,id){
+
+  if(!id) return;
+
+  /* valida ANTES de pedir confirmação */
+  if(type==="dentist"){
+    const hasDocs =
+      state.orders.some(o=>o.dentistaId===id) ||
+      state.quotes.some(q=>q.dentistaId===id);
+
+    if(hasDocs){
+      toast("ESTE DENTISTA POSSUI OS OU ORÇAMENTOS. EXCLUA-OS ANTES.");
+      return;
+    }
+  }
+
+  if(!confirm("EXCLUIR ESTE REGISTRO?\n\nA ação não pode ser desfeita.")) return;
+
+  const collection = {
+    order:"ordens_servico",
+    quote:"orcamentos",
+    dentist:"dentistas"
+  }[type];
+
+  await db.collection(collection).doc(id).delete();
+
+  if(dialog.open) dialog.close();
+
+  toast("REGISTRO EXCLUÍDO");
+}
+
+/* =========================================================
+   GERAR OS A PARTIR DO ORÇAMENTO (atômico)
+========================================================= */
+async function generateOrder(id){
+
+  const quote = state.quotes.find(q=>q.id===id);
+  if(!quote) return;
+
+  if(quote.osNum){
+    toast("ESTE ORÇAMENTO JÁ GEROU A OS "+quote.osNum+".");
+    return;
+  }
+
+  if(!confirm("GERAR UMA OS A PARTIR DESTE ORÇAMENTO?")) return;
+
+  try{
+
+    const number = await nextNumber("os");
+    const batch = db.batch();
+
+    batch.set(db.collection("ordens_servico").doc(),{
+      numero:number,
+      dentistaId:quote.dentistaId,
+      dentistaNome:quote.dentistaNome||"",
+      paciente:quote.paciente,
+      cpfPaciente:quote.cpfPaciente||"",
+      data:today(),
+      status:"RECEBIDO",
+      previsao:"",
+      vencimento:"",
+      itens:quote.itens||[],
+      pagamentos:[],
+      observacoes:quote.observacoes||quote.obs||"",
+      orcNum:quote.numero,
+      criadoEm:timestamp()
+    });
+
+    batch.update(db.collection("orcamentos").doc(id),{
+      status:"APROVADO",
+      osNum:number
+    });
+
+    await batch.commit();
+
+    dialog.close();
+    toast("OS "+number+" CRIADA COM SUCESSO");
+
+  }catch(err){
+    console.error(err);
+    toast("ERRO AO GERAR OS: "+err.message);
+  }
+}
+
+/* =========================================================
+   IMPRESSÃO
+========================================================= */
+function printDocument(type,id){
+
+  const source = type==="order" ? state.orders : state.quotes;
+  const o = source.find(x=>x.id===id);
+  if(!o) return;
+
+  normalizeOrder(o);
+
+  const isOrder = type==="order";
+  const dentist = state.dentists.find(d=>d.id===o.dentistaId)||{};
+  const items = o.itens||[];
+  const lab = state.lab||{};
+
+  $("#print-area").innerHTML = `
+    <div class="print-page">
+
+      <div class="print-header">
+        <h1>${esc(lab.nome||"LABORATÓRIO HARMONIA FUNCIONAL")}</h1>
+        <p>
+          ${[lab.cnpj?"CNPJ: "+lab.cnpj:"",lab.tel||"",lab.end||""]
+            .filter(Boolean).map(esc).join(" | ")}
+        </p>
+      </div>
+
+      <div class="print-title">
+        ${isOrder?"ORDEM DE SERVIÇO Nº ":"ORÇAMENTO Nº "}${esc(o.numero)}
+      </div>
+
+      <table class="print-info">
+        <tr>
+          <td>DENTISTA</td>
+          <td>
+            ${esc(dentist.nome||o.dentistaNome||"-")}
+            ${dentist.cro?" — CRO "+esc(dentist.cro):""}
+            ${dentist.cpf?" — CPF "+esc(maskCPF(dentist.cpf)):""}
+          </td>
+        </tr>
+        <tr>
+          <td>PACIENTE</td>
+          <td>${esc(o.paciente)}${o.cpfPaciente?" — CPF "+esc(maskCPF(o.cpfPaciente)):""}</td>
+        </tr>
+        ${isOrder ? `
+          <tr><td>ETAPA</td><td>${esc(o.status)}</td></tr>
+          <tr><td>PREVISÃO DE ENTREGA</td><td>${dateBR(o.previsao)}</td></tr>
+          <tr><td>VENCIMENTO</td><td>${dateBR(o.vencimento)}</td></tr>
+        ` : `
+          <tr><td>DATA</td><td>${dateBR(o.data)}</td></tr>
+          <tr><td>VALIDADE</td><td>${o.validade||30} DIAS CORRIDOS (ATÉ ${dateBR(addDays(o.data,o.validade||30))})</td></tr>
+        `}
+      </table>
+
+      <table class="print-items">
+        <thead>
+          <tr>
+            <th>DESCRIÇÃO</th><th>COR / DENTES</th><th>QTD</th>
+            <th>UNITÁRIO</th><th>TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(i=>`
+            <tr>
+              <td>${esc(i.descricao||i.d||"")}</td>
+              <td>${esc(i.cor||"")}</td>
+              <td>${i.quantidade||i.q||1}</td>
+              <td>${money(i.valor||i.v||0)}</td>
+              <td>${money((i.quantidade||i.q||1)*(i.valor||i.v||0))}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+
+      <div class="print-total">
+        <div><span>TOTAL</span><span>${money(o.total)}</span></div>
+        ${isOrder ? `
+          <div><span>PAGO</span><span>${money(o.pago)}</span></div>
+          <div><span>SALDO</span><span>${money(o.saldo)}</span></div>
+        ` : ""}
+      </div>
+
+      ${o.observacoes||o.obs ? `
+        <p style="margin-top:15px">
+          <b>OBSERVAÇÕES:</b> ${esc(o.observacoes||o.obs)}
+        </p>` : ""}
+
+      <div class="print-signatures">
+        <div class="signature">LABORATÓRIO</div>
+        <div class="signature">${isOrder?"DENTISTA":"APROVAÇÃO DO DENTISTA"}</div>
+      </div>
+
+    </div>`;
+
+  /* Abre a caixa nativa de impressão (impressora, Salvar como PDF, etc.) */
+  setTimeout(()=>window.print(),100);
+}
+
+/* =========================================================
+   RELATÓRIO FINANCEIRO
+========================================================= */
+function docDate(o){
+  if(o.data) return o.data;
+  const ms = createdTime(o);
+  return ms ? new Date(ms-new Date(ms).getTimezoneOffset()*60000).toISOString().slice(0,10) : "";
+}
+
+const payLabel = o => (o.atrasado && o.statusPagamento!=="PAGO")
+  ? o.statusPagamento+" / VENCIDO"
+  : o.statusPagamento;
+
+function readReportFilters(){
+  return {
+    de:getField("de"),
+    ate:getField("ate"),
+    dentista:getField("dentistaId"),
+    situacao:getField("situacao")
+  };
+}
+
+function reportRows(f){
+  return state.orders.filter(o=>{
+    const d = docDate(o);
+    if(f.de && (!d || d<f.de)) return false;
+    if(f.ate && (!d || d>f.ate)) return false;
+    if(f.dentista && o.dentistaId!==f.dentista) return false;
+    if(f.situacao==="VENCIDO") return o.atrasado;
+    if(f.situacao && o.statusPagamento!==f.situacao) return false;
+    return true;
+  }).sort((a,b)=>
+    docDate(a).localeCompare(docDate(b)) || String(a.numero).localeCompare(String(b.numero))
+  );
+}
+
+function reportBody(rows){
+
+  if(!rows.length)
+    return `<div class="card empty">NENHUM REGISTRO PARA OS FILTROS INFORMADOS.</div>`;
+
+  const sum = k => rows.reduce((s,o)=>s+o[k],0);
+
+  const groups = {};
+  rows.forEach(o=>{
+    const g = groups[dentistName(o)] ||= {n:0,total:0,pago:0,saldo:0};
+    g.n++; g.total+=o.total; g.pago+=o.pago; g.saldo+=o.saldo;
+  });
+
+  const summary = Object.entries(groups)
+    .sort((a,b)=>a[0].localeCompare(b[0],"pt-BR"));
+
+  return `
+  <div class="rpt">
+    <table>
+      <thead>
+        <tr>
+          <th>OS</th><th>DATA</th><th>PACIENTE</th><th>DENTISTA</th><th>VENC.</th>
+          <th class="num">TOTAL</th><th class="num">PAGO</th><th class="num">SALDO</th><th>SITUAÇÃO</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(o=>`
+          <tr>
+            <td><b>${esc(o.numero)}</b></td>
+            <td>${dateBR(docDate(o))}</td>
+            <td>${esc(o.paciente)}</td>
+            <td>${esc(dentistName(o))}</td>
+            <td>${dateBR(o.vencimento)}</td>
+            <td class="num">${money(o.total)}</td>
+            <td class="num">${money(o.pago)}</td>
+            <td class="num">${money(o.saldo)}</td>
+            <td>${esc(payLabel(o))}</td>
+          </tr>`).join("")}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5">TOTAL (${rows.length} OS)</td>
+          <td class="num">${money(sum("total"))}</td>
+          <td class="num">${money(sum("pago"))}</td>
+          <td class="num">${money(sum("saldo"))}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <h4>RESUMO POR DENTISTA</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>DENTISTA</th><th class="num">OS</th>
+          <th class="num">TOTAL</th><th class="num">PAGO</th><th class="num">SALDO</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${summary.map(([name,g])=>`
+          <tr>
+            <td>${esc(name)}</td>
+            <td class="num">${g.n}</td>
+            <td class="num">${money(g.total)}</td>
+            <td class="num">${money(g.pago)}</td>
+            <td class="num">${money(g.saldo)}</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openReport(){
+
+  dialog.dataset.type = "report";
+  dialog.dataset.id = "";
+
+  const first = today().slice(0,8)+"01";
+
+  const body = `
+    <div class="grid">
+      ${field("de","DE (DATA DA OS)",first,"date")}
+      ${field("ate","ATÉ",today(),"date")}
+      ${selectField("dentistaId","DENTISTA",
+        [{value:"",text:"TODOS"},...state.dentists.map(d=>({value:d.id,text:d.nome}))],"")}
+      ${selectField("situacao","SITUAÇÃO DO PAGAMENTO",
+        [{value:"",text:"TODAS"},"PENDENTE","PARCIAL","PAGO","VENCIDO"],"")}
+    </div>
+    <div id="report-preview" style="margin-top:16px"></div>`;
+
+  openDialog("RELATÓRIO FINANCEIRO",body,`
+    <button class="primary" data-action="print-report">🖨 IMPRIMIR / PDF</button>
+    <button data-action="close-dialog">FECHAR</button>`);
+
+  runReport();
+}
+
+function runReport(){
+  const box = $("#report-preview");
+  if(box) box.innerHTML = reportBody(reportRows(readReportFilters()));
+}
+
+function printReport(){
+
+  const f = readReportFilters();
+
+  if(f.de && f.ate && f.de>f.ate){
+    toast("A DATA INICIAL NÃO PODE SER MAIOR QUE A FINAL.");
+    return;
+  }
+
+  const rows = reportRows(f);
+
+  if(!rows.length){
+    toast("NENHUM REGISTRO PARA IMPRIMIR.");
+    return;
+  }
+
+  const lab = state.lab||{};
+  const dentist = f.dentista
+    ? (state.dentists.find(d=>d.id===f.dentista)?.nome||"-")
+    : "TODOS";
+
+  $("#print-area").innerHTML = `
+    <div class="print-page">
+
+      <div class="print-header">
+        <h1>${esc(lab.nome||"LABORATÓRIO HARMONIA FUNCIONAL")}</h1>
+        <p>
+          ${[lab.cnpj?"CNPJ: "+lab.cnpj:"",lab.tel||"",lab.end||""]
+            .filter(Boolean).map(esc).join(" | ")}
+        </p>
+      </div>
+
+      <div class="print-title">RELATÓRIO FINANCEIRO</div>
+
+      <table class="print-info">
+        <tr><td>PERÍODO</td><td>${f.de?dateBR(f.de):"INÍCIO"} A ${f.ate?dateBR(f.ate):"HOJE"}</td></tr>
+        <tr><td>DENTISTA</td><td>${esc(dentist)}</td></tr>
+        <tr><td>SITUAÇÃO</td><td>${esc(f.situacao||"TODAS")}</td></tr>
+        <tr><td>EMITIDO EM</td><td>${dateBR(today())}</td></tr>
+      </table>
+
+      ${reportBody(rows)}
+    </div>`;
+
+  setTimeout(()=>window.print(),100);
+}
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+document.addEventListener("click",async event=>{
+
+  const el = event.target.closest("[data-action]");
+  if(!el) return;
+
+  const action = el.dataset.action;
+
+  /* Botões dentro de uma linha clicável: executam só a própria ação */
+  if(el.tagName==="BUTTON") event.stopPropagation();
+
+  const guarded = async fn=>{
+    el.disabled = true;
+    try{ await fn(); }finally{ el.disabled = false; }
+  };
+
+  try{
+
+    switch(action){
+
+      case "logout": await auth.signOut(); break;
+
+      case "config": openConfig(); break;
+
+      case "tab":
+        state.tab = el.dataset.tab;
+        state.search = "";
+        state.filter = "";
+        render();
+        break;
+
+      case "new-order": openDocument("order"); break;
+      case "new-quote": openDocument("quote"); break;
+      case "new-dentist": openDentist(); break;
+
+      case "edit": openDocument(el.dataset.type,el.dataset.id); break;
+      case "edit-dentist": openDentist(el.dataset.id); break;
+
+      case "close-dialog": dialog.close(); break;
+
+      case "add-item":
+        $("#items").insertAdjacentHTML("beforeend",itemRow({quantidade:1}));
+        $$("#items .item-row:last-child input")[0]?.focus();
+        break;
+
+      case "add-payment":
+        $("#payments").insertAdjacentHTML("beforeend",paymentRow({data:today(),forma:"PIX"}));
+        calculateDialog();
+        break;
+
+      case "remove-row":
+        el.closest(".item-row,.payment-row")?.remove();
+        calculateDialog();
+        break;
+
+      case "save-document": await guarded(saveDocument); break;
+      case "save-dentist": await guarded(saveDentist); break;
+      case "save-config": await guarded(saveConfig); break;
+      case "save-payment": await guarded(savePayment); break;
+
+      case "receive": openReceive(el.dataset.id); break;
+
+      case "delete":
+        await deleteRecord(el.dataset.type,el.dataset.id);
+        break;
+
+      case "delete-dentist":
+        await deleteRecord("dentist",el.dataset.id);
+        break;
+
+      case "generate-order": await generateOrder(el.dataset.id); break;
+
+      case "print": printDocument(el.dataset.type,el.dataset.id); break;
+
+      case "report": openReport(); break;
+      case "print-report": printReport(); break;
+    }
+
+  }catch(err){
+    console.error(err);
+    toast("ERRO: "+err.message);
+  }
+});
+
+/* Linhas da tabela acessíveis por teclado (Enter / Espaço) */
+document.addEventListener("keydown",event=>{
+
+  if(event.key!=="Enter" && event.key!==" ") return;
+
+  const row = event.target.closest?.("tr[data-action]");
+
+  if(row && event.target===row){
+    event.preventDefault();
+    row.click();
+  }
+});
+
+/* =========================================================
+   INPUT / FILTROS
+========================================================= */
+document.addEventListener("input",event=>{
+
+  const el = event.target;
+
+  if(!event.isComposing) normalizeInput(el);
+
+  if(el.id==="search"){
+    state.search = el.value;
+    renderKeepingSearch();
+  }
+
+  if(el.matches('[data-item="valor"],[data-payment="valor"],[data-item="quantidade"]')){
+    calculateDialog();
+  }
+});
+
+document.addEventListener("change",event=>{
+
+  const el = event.target;
+
+  if(el.id==="filter"){
+    state.filter = el.value;
+    render();
+  }
+
+  if(dialog.open && dialog.dataset.type==="report" && el.closest("dialog")) runReport();
+
+  if(el.matches('[data-item="valor"],[data-payment="valor"],[data-item="quantidade"]')){
+    calculateDialog();
+  }
+});
+
+document.addEventListener("compositionend",event=>normalizeInput(event.target));
+
+/* =========================================================
+   ENTER AVANÇA PARA O PRÓXIMO CAMPO DENTRO DOS MODAIS
+========================================================= */
+document.addEventListener("keydown",event=>{
+
+  if(event.key!=="Enter" || event.isComposing) return;
+
+  const target = event.target;
+
+  if(target.tagName==="TEXTAREA" && !event.ctrlKey) return;
+  if(target.tagName==="BUTTON") return;
+
+  const dlg = target.closest("dialog");
+  if(!dlg) return;
+
+  event.preventDefault();
+
+  const fields = [...dlg.querySelectorAll("input:not([readonly]),select,textarea,button")]
+    .filter(x=>!x.disabled && x.offsetParent!==null && x.tabIndex>=0);
+
+  const next = fields[fields.indexOf(target)+1];
+  if(next) next.focus();
+});
+
+/* =========================================================
+   FORMATAÇÃO MONETÁRIA AO SAIR DO CAMPO
+========================================================= */
+document.addEventListener("focusout",event=>{
+
+  const el = event.target;
+
+  if(el.dataset?.mask) validateField(el);
+
+  if(el.matches('[data-item="valor"],[data-payment="valor"]') && el.value){
+    el.value = moneyInput(cents(el.value));
+  }
+});
+</script>
+
 </body>
 </html>
