@@ -3,450 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratório Harmonia Funcional</title>
+    <title>LABORATÓRIO HARMONIA FUNCIONAL</title>
     
-    <!-- Firebase CDNs (Firestore e Auth compat) -->
+    <!-- FIREBASE CDNS -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            --primary-color: #0284c7;
+            --primary: #0284c7;
             --primary-dark: #0369a1;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #cbd5e1;
-            --error-color: #ef4444;
-            --success-color: #22c55e;
-            --warning-color: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #cbd5e1;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
         header {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: var(--card); border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
         }
+        header h1 { font-size: 1.25rem; color: var(--primary-dark); }
 
-        header h1 {
-            font-size: 1.25rem;
-            color: var(--primary-dark);
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 2rem; }
 
         .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 400px;
+            background-color: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 2rem; width: 100%; max-width: 400px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
+        .card h2 { margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center; }
 
-        .card h2 {
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            text-align: center;
-            color: var(--text-color);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-size: 0.875rem; font-weight: 600; }
         .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            background-color: #fff;
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+            border-radius: 4px; font-size: 1rem; background: #fff; text-transform: uppercase;
         }
-
         .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
         }
 
         button {
-            padding: 0.75rem 1rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 0.75rem 1rem; background-color: var(--primary); color: white;
+            border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: background 0.2s;
         }
+        button:hover { background-color: var(--primary-dark); }
+        button:disabled { background-color: var(--border); cursor: not-allowed; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
 
-        button:hover {
-            background-color: var(--primary-dark);
-        }
+        .error-msg { color: var(--danger); font-size: 0.875rem; margin-top: 0.75rem; text-align: center; display: none; }
 
-        button.btn-danger {
-            background-color: var(--error-color);
-        }
-        button.btn-danger:hover {
-            background-color: #dc2626;
-        }
-
-        .error-msg {
-            color: var(--error-color);
-            font-size: 0.875rem;
-            margin-top: 0.75rem;
-            text-align: center;
-            display: none;
-        }
-
-        #app-container {
-            display: none;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-            align-self: flex-start;
-        }
+        #app-container { display: none; width: 100%; max-width: 1300px; margin: 0 auto; padding: 1.5rem; align-self: flex-start; }
 
         .nav-tabs {
-            display: flex;
-            gap: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-            padding-bottom: 0.5rem;
-            flex-wrap: wrap;
+            display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem; padding-bottom: 0.5rem; flex-wrap: wrap; background: #fff; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border);
         }
-
         .nav-tabs button {
-            background: none;
-            color: var(--text-color);
-            border: none;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            background: none; color: var(--text); border: none; font-weight: 600;
+            padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;
         }
+        .nav-tabs button.active { background-color: var(--primary); color: white; }
 
-        .nav-tabs button.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .tab-content {
-            display: none;
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; }
+        @media(max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
 
-        .tab-content.active {
-            display: block;
-        }
+        table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+        th { background-color: #f1f5f9; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 2rem;
-        }
+        .action-btns { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .action-btns button { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
 
-        @media(max-width: 768px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.875rem;
-        }
-
-        th {
-            background-color: #f1f5f9;
-            font-weight: 600;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btns button {
-            padding: 0.35rem 0.6rem;
-            font-size: 0.75rem;
-        }
-
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+        .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
         .badge-recebido { background-color: #e2e8f0; color: #475569; }
         .badge-prova { background-color: #fef08a; color: #854d0e; }
         .badge-acabamento { background-color: #fed7aa; color: #9a3412; }
         .badge-concluido { background-color: #bbf7d0; color: #166534; }
         .badge-entregue { background-color: #bae6fd; color: #0369a1; }
-        
         .badge-pago { background-color: #dcfce7; color: #15803d; }
         .badge-pendente { background-color: #fee2e2; color: #b91c1c; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgb(0 0 0 / 0.1); }
+        .stat-card h4 { font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.4rem; }
+        .stat-card p { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); }
+
+        @media print {
+            body * { visibility: hidden; }
+            #print-section, #print-section * { visibility: visible; }
+            #print-section { position: absolute; left: 0; top: 0; width: 100%; background: white; padding: 2rem; }
+            header, .nav-tabs, form, .action-btns, button { display: none !important; }
         }
 
-        .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-        }
-
-        .stat-card h4 {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card p {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
+        .print-box { background: white; border: 1px solid var(--border); padding: 2rem; border-radius: 8px; max-width: 800px; margin: 0 auto; }
+        .print-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .print-header h2 { color: var(--primary-dark); font-size: 1.5rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Laboratório Harmonia Funcional</h1>
+        <h1>LABORATÓRIO HARMONIA FUNCIONAL</h1>
         <div id="user-status" style="display: none;">
-            <button id="btn-logout" style="width: auto; padding: 0.5rem 1rem; font-size: 0.875rem;">Sair</button>
+            <button id="btn-logout" class="btn-secondary" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">SAIR DO SISTEMA</button>
         </div>
     </header>
 
     <main>
-        <!-- Tela de Login -->
+        <!-- TELA DE LOGIN -->
         <div id="login-card" class="card">
-            <h2>Acesso ao Sistema</h2>
+            <h2>ACESSO RESTRITO</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="senha-unica">Senha de Acesso</label>
-                    <input type="password" id="senha-unica" placeholder="Digite a senha" required>
+                    <label for="senha-unica">SENHA DE ACESSO</label>
+                    <input type="password" id="senha-unica" placeholder="DIGITE A SENHA MESTRE" required>
                 </div>
-                <button type="submit" id="btn-entrar" style="width: 100%;">Entrar</button>
-                <div id="login-error" class="error-msg">Senha incorreta ou erro de conexão.</div>
+                <button type="submit" id="btn-entrar" style="width: 100%;">ENTRAR NO SISTEMA</button>
+                <div id="login-error" class="error-msg">SENHA INCORRETA.</div>
             </form>
         </div>
 
-        <!-- Painel Principal -->
+        <!-- PAINEL PRINCIPAL -->
         <div id="app-container">
             <div class="nav-tabs">
-                <button class="tab-btn active" onclick="switchTab('os')">Ordens de Serviço (OS)</button>
-                <button class="tab-btn" onclick="switchTab('clientes')">Dentistas / Clientes</button>
-                <button class="tab-btn" onclick="switchTab('financeiro')">Financeiro & Relatórios</button>
+                <button class="tab-btn active" onclick="switchTab('dashboard')">PAINEL GERAL</button>
+                <button class="tab-btn" onclick="switchTab('os')">ORDENS DE SERVIÇO</button>
+                <button class="tab-btn" onclick="switchTab('orcamentos')">ORÇAMENTOS</button>
+                <button class="tab-btn" onclick="switchTab('clientes')">DENTISTAS & CLIENTES</button>
+                <button class="tab-btn" onclick="switchTab('financeiro')">FINANCEIRO DETALHADO</button>
             </div>
 
-            <!-- ABA 1: ORDENS DE SERVIÇO -->
-            <div id="tab-os" class="tab-content active">
-                <div class="grid-layout">
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card"><h4>FATURAMENTO TOTAL</h4><p id="dash-fat">R$ 0,00</p></div>
+                    <div class="stat-card"><h4>VALORES A RECEBER</h4><p id="dash-pend">R$ 0,00</p></div>
+                    <div class="stat-card"><h4>OS EM ANDAMENTO</h4><p id="dash-ativas">0</p></div>
+                    <div class="stat-card"><h4>DENTISTAS CADASTRADOS</h4><p id="dash-cli">0</p></div>
+                </div>
+                <div class="card" style="max-width: 100%;">
+                    <h3 style="margin-bottom: 1rem;">BEM-VINDO AO SISTEMA PROFISSIONAL</h3>
+                    <p style="color: var(--text-light); line-height: 1.6;">SISTEMA INTEGRADO COM FIREBASE CLOUD FIRESTORE. NUMERAÇÃO DE OS AUTOMÁTICA E PROTEÇÃO CONTRA DUPLO CLIQUE ATIVAS.</p>
+                </div>
+            </div>
+
+            <!-- TAB 2: ORDENS DE SERVIÇO -->
+            <div id="tab-os" class="tab-content">
+                <div class="grid-2">
                     <div class="card" style="max-width: 100%; height: fit-content;">
-                        <h2 id="os-form-title" style="font-size: 1.25rem; text-align: left;">Nova Ordem de Serviço</h2>
+                        <h2 id="os-form-title" style="font-size: 1.2rem; text-align: left;">NOVA ORDEM DE SERVIÇO</h2>
                         <form id="os-form">
                             <input type="hidden" id="os-id">
                             <div class="form-group">
-                                <label for="os-numero">Número da OS</label>
-                                <input type="text" id="os-numero" required placeholder="Ex: 001/2026">
+                                <label for="os-numero">NÚMERO DA OS (AUTOMÁTICO)</label>
+                                <input type="text" id="os-numero" readonly style="background: #e2e8f0; font-weight: bold;" placeholder="GERANDO...">
                             </div>
                             <div class="form-group">
-                                <label for="os-dentista">Dentista Responsável</label>
-                                <select id="os-dentista" required>
-                                    <option value="">Selecione o dentista...</option>
-                                </select>
+                                <label for="os-dentista">DENTISTA SOLICITANTE</label>
+                                <select id="os-dentista" required><option value="">SELECIONE...</option></select>
                             </div>
                             <div class="form-group">
-                                <label for="os-paciente">Nome do Paciente</label>
-                                <input type="text" id="os-paciente" required placeholder="Nome do paciente">
+                                <label for="os-paciente">NOME DO PACIENTE</label>
+                                <input type="text" id="os-paciente" required placeholder="NOME COMPLETO">
                             </div>
                             <div class="form-group">
-                                <label for="os-tipo">Tipo de Trabalho</label>
-                                <input type="text" id="os-tipo" required placeholder="Ex: Prótese Total Superior">
+                                <label for="os-tipo">TIPO DE PRÓTESE / TRABALHO</label>
+                                <input type="text" id="os-tipo" required placeholder="EX: PRÓTESE TOTAL SUPERIOR">
                             </div>
                             <div class="form-group">
-                                <label for="os-cor">Cor e Dentes Envolvidos</label>
-                                <input type="text" id="os-cor" placeholder="Ex: A2, dentes 11 ao 21">
+                                <label for="os-cor">COR E DENTES ENVOLVIDOS</label>
+                                <input type="text" id="os-cor" placeholder="EX: A2, DENTES 11 AO 21">
                             </div>
                             <div class="form-group">
-                                <label for="os-valor">Valor (R$)</label>
+                                <label for="os-valor">VALOR DO SERVIÇO (R$)</label>
                                 <input type="number" step="0.01" id="os-valor" required placeholder="0.00">
                             </div>
                             <div class="form-group">
-                                <label for="os-pagamento">Status do Pagamento</label>
+                                <label for="os-pagamento">STATUS DO PAGAMENTO</label>
                                 <select id="os-pagamento" required>
-                                    <option value="Pendente">Pendente</option>
-                                    <option value="Pago">Pago</option>
+                                    <option value="PENDENTE">PENDENTE</option>
+                                    <option value="PAGO">PAGO</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="os-status">Etapa / Status Atual</label>
+                                <label for="os-status">ETAPA ATUAL NO LABORATÓRIO</label>
                                 <select id="os-status" required>
-                                    <option value="Recebido">Recebido</option>
-                                    <option value="Em Prova">Em Prova</option>
-                                    <option value="Em Acabamento">Em Acabamento</option>
-                                    <option value="Concluído">Concluído</option>
-                                    <option value="Entregue">Entregue</option>
+                                    <option value="RECEBIDO">RECEBIDO</option>
+                                    <option value="EM PROVA">EM PROVA</option>
+                                    <option value="EM ACABAMENTO">EM ACABAMENTO</option>
+                                    <option value="CONCLUÍDO">CONCLUÍDO</option>
+                                    <option value="ENTREGUE">ENTREGUE</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="os-previsao">Previsão de Entrega</label>
+                                <label for="os-previsao">PREVISÃO DE ENTREGA</label>
                                 <input type="date" id="os-previsao" required>
                             </div>
                             <div class="form-group">
-                                <label for="os-obs">Observações Técnicas</label>
-                                <textarea id="os-obs" rows="2" placeholder="Detalhes do molde, cor, etc."></textarea>
+                                <label for="os-obs">OBSERVAÇÕES TÉCNICAS</label>
+                                <textarea id="os-obs" rows="2" placeholder="DETALHES TÉCNICOS"></textarea>
                             </div>
                             <div style="display: flex; gap: 0.5rem;">
-                                <button type="submit" style="flex: 1;" id="btn-salvar-os">Salvar OS</button>
-                                <button type="button" class="btn-danger" id="btn-cancelar-os" style="display: none; width: auto;" onclick="limparFormularioOS()">Cancelar</button>
+                                <button type="submit" style="flex: 1;" id="btn-salvar-os">SALVAR OS</button>
+                                <button type="button" class="btn-danger" id="btn-cancelar-os" style="display: none; width: auto;" onclick="limparOS()">CANCELAR</button>
                             </div>
                         </form>
                     </div>
 
                     <div>
-                        <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Ordens de Serviço Ativas</h3>
+                        <h3 style="margin-bottom: 1rem;">CONTROLE DE ORDENS DE SERVIÇO</h3>
                         <div style="overflow-x: auto;">
                             <table id="tabela-os">
-                               <thead>
+                                <thead>
                                     <tr>
-                                        <th>OS / Paciente</th>
-                                        <th>Dentista</th>
-                                        <th>Trabalho / Previsão</th>
-                                        <th>Status / Pagamento</th>
-                                        <th>Ações</th>
+                                        <th>OS / PACIENTE</th>
+                                        <th>DENTISTA</th>
+                                        <th>TRABALHO / PREVISÃO</th>
+                                        <th>STATUS / PAGAMENTO</th>
+                                        <th>AÇÕES</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr><td colspan="5" style="text-align: center;">Carregando ordens de serviço...</td></tr>
-                                </tbody>
+                                <tbody><tr><td colspan="5" style="text-align: center;">CARREGANDO...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA 2: DENTISTAS / CLIENTES -->
-            <div id="tab-clientes" class="tab-content">
-                <div class="grid-layout">
+            <!-- TAB 3: ORÇAMENTOS -->
+            <div id="tab-orcamentos" class="tab-content">
+                <div class="grid-2">
                     <div class="card" style="max-width: 100%; height: fit-content;">
-                        <h2 id="form-title" style="font-size: 1.25rem; text-align: left;">Novo Dentista</h2>
+                        <h2 style="font-size: 1.2rem; text-align: left;">GERAR ORÇAMENTO</h2>
+                        <form id="orcamento-form">
+                            <div class="form-group">
+                                <label for="orc-dentista">DENTISTA / CLIENTE</label>
+                                <select id="orc-dentista" required><option value="">SELECIONE...</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="orc-paciente">NOME DO PACIENTE</label>
+                                <input type="text" id="orc-paciente" required placeholder="NOME DO PACIENTE">
+                            </div>
+                            <div class="form-group">
+                                <label for="orc-descricao">DESCRIÇÃO DETALHADA DO TRABALHO</label>
+                                <textarea id="orc-descricao" rows="3" required placeholder="DESCRIÇÃO"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="orc-valor">VALOR TOTAL (R$)</label>
+                                <input type="number" step="0.01" id="orc-valor" required placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="orc-validade">VALIDADE DA PROPOSTA (DIAS)</label>
+                                <input type="number" id="orc-validade" value="15" required>
+                            </div>
+                            <button type="button" class="btn-success" style="width: 100%;" onclick="gerarOrcamentoVisual()">VISUALIZAR / IMPRIMIR ORÇAMENTO</button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <div id="print-section">
+                            <div class="print-box">
+                                <div class="print-header">
+                                    <h2>LABORATÓRIO HARMONIA FUNCIONAL</h2>
+                                    <p style="font-size: 0.85rem; color: var(--text-light);">PRÓTESE DENTÁRIA DE ALTA PRECISÃO</p>
+                                </div>
+                                <h3 style="text-align: center; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--primary);">ORÇAMENTO DE TRABALHO</h3>
+                                <div style="margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.6;">
+                                    <p><strong>DENTISTA RESPONSÁVEL:</strong> <span id="view-orc-dentista">-</span></p>
+                                    <p><strong>PACIENTE:</strong> <span id="view-orc-paciente">-</span></p>
+                                    <p><strong>DATA DE EMISSÃO:</strong> <span id="view-orc-data">-</span></p>
+                                    <p><strong>VALIDADE:</strong> <span id="view-orc-validade">-</span> DIAS</p>
+                                </div>
+                                <table style="margin-bottom: 1.5rem;">
+                                    <thead>
+                                        <tr><th>DESCRIÇÃO DOS SERVIÇOS</th><th style="text-align: right;">VALOR</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="view-orc-desc">PREENCHA OS DADOS AO LADO.</td>
+                                            <td id="view-orc-val" style="text-align: right;">R$ 0,00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="text-align: right; font-size: 1.2rem; font-weight: bold; margin-bottom: 2rem;">
+                                    TOTAL: <span id="view-orc-total" style="color: var(--primary-dark);">R$ 0,00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light); border-top: 1px solid var(--border); pt: 1rem;">
+                                    <span>ASSINATURA DO LABORATÓRIO</span>
+                                    <span>APROVAÇÃO DO DENTISTA</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn-secondary" onclick="window.print()">IMPRIMIR / SALVAR PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CLIENTES / DENTISTAS -->
+            <div id="tab-clientes" class="tab-content">
+                <div class="grid-2">
+                    <div class="card" style="max-width: 100%; height: fit-content;">
+                        <h2 id="cli-form-title" style="font-size: 1.2rem; text-align: left;">NOVO DENTISTA</h2>
                         <form id="dentista-form">
                             <input type="hidden" id="dentista-id">
                             <div class="form-group">
-                                <label for="nome">Nome do Dentista</label>
-                                <input type="text" id="nome" required placeholder="Ex: Dr. Carlos Silva">
+                                <label for="nome">NOME DO DENTISTA</label>
+                                <input type="text" id="nome" required placeholder="EX: DR. CARLOS SILVA">
                             </div>
                             <div class="form-group">
                                 <label for="cro">CRO</label>
-                                <input type="text" id="cro" required placeholder="Ex: CRO-CE 1234">
+                                <input type="text" id="cro" required placeholder="EX: CRO-CE 1234">
                             </div>
                             <div class="form-group">
-                                <label for="telefone">Telefone / WhatsApp</label>
+                                <label for="telefone">TELEFONE / WHATSAPP</label>
                                 <input type="text" id="telefone" placeholder="(85) 99999-9999">
                             </div>
                             <div class="form-group">
-                                <label for="endereco">Clínica / Endereço</label>
-                                <textarea id="endereco" rows="2" placeholder="Endereço da clínica"></textarea>
+                                <label for="endereco">ENDEREÇO DA CLÍNICA</label>
+                                <textarea id="endereco" rows="2" placeholder="ENDEREÇO COMPLETO"></textarea>
                             </div>
                             <div style="display: flex; gap: 0.5rem;">
-                                <button type="submit" style="flex: 1;" id="btn-salvar-dentista">Salvar</button>
-                                <button type="button" id="btn-cancelar-edicao" class="btn-danger" style="display: none; width: auto;" onclick="limparFormularioDentista()">Cancelar</button>
+                                <button type="submit" style="flex: 1;" id="btn-salvar-cli">SALVAR DENTISTA</button>
+                                <button type="button" class="btn-danger" id="btn-cancelar-cli" style="display: none; width: auto;" onclick="limparCLI()">CANCELAR</button>
                             </div>
                         </form>
                     </div>
 
                     <div>
-                        <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Dentistas Cadastrados</h3>
+                        <h3 style="margin-bottom: 1rem;">DENTISTAS CADASTRADOS</h3>
                         <table id="tabela-dentistas">
                             <thead>
-                                <tr>
-                                    <th>Nome / CRO</th>
-                                    <th>Contato</th>
-                                    <th>Ações</th>
-                                </tr>
+                                <tr><th>NOME / CRO</th><th>CONTATO</th><th>AÇÕES</th></tr>
                             </thead>
-                            <tbody>
-                                <tr><td colspan="3" style="text-align: center;">Carregando dentistas...</td></tr>
-                            </tbody>
+                            <tbody><tr><td colspan="3" style="text-align: center;">CARREGANDO...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA 3: FINANCEIRO E RELATÓRIOS -->
+            <!-- TAB 5: FINANCEIRO -->
             <div id="tab-financeiro" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">Painel Financeiro e Relatórios</h2>
+                <h2 style="margin-bottom: 1.5rem;">RELATÓRIO FINANCEIRO COMPLETO</h2>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <h4>Faturamento Total (Cadastrado)</h4>
-                        <p id="stat-faturamento">R$ 0,00</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>A Receber (Pendente)</h4>
-                        <p id="stat-pendente">R$ 0,00</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>OS em Andamento</h4>
-                        <p id="stat-ativas">0</p>
+                    <div class="stat-card"><h4>FATURAMENTO GERAL</h4><p id="fin-fat">R$ 0,00</p></div>
+                    <div class="stat-card"><h4>RECEBIDO (PAGO)</h4><p id="fin-pago">R$ 0,00</p></div>
+                    <div class="stat-card"><h4>A RECEBER (PENDENTE)</h4><p id="fin-pend">R$ 0,00</p></div>
+                </div>
+                <div class="card" style="max-width: 100%; margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">RESUMO DE PAGAMENTOS POR OS</h3>
+                    <div style="overflow-x: auto;">
+                        <table id="tabela-financeiro">
+                            <thead>
+                                <tr><th>OS / PACIENTE</th><th>DENTISTA</th><th>VALOR</th><th>STATUS PAGAMENTO</th></tr>
+                            </thead>
+                            <tbody><tr><td colspan="4" style="text-align: center;">CARREGANDO...</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -454,7 +387,6 @@
     </main>
 
     <script>
-        // Configuração do Firebase com as suas credenciais reais
         const firebaseConfig = {
             apiKey: "AIzaSyBQ8wnANHOVRE_HIgSWKunpv751BoPr9sc",
             authDomain: "harmoniafuncional-fa6d8.firebaseapp.com",
@@ -464,17 +396,14 @@
             appId: "1:454696393035:web:4cec553f592da2804cb0ce"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         const SYSTEM_EMAIL = "admin@harmoniafuncional.local";
 
-        let listaDentistasCache = [];
+        let cacheDentistas = [];
+        let proximoNumeroOS = 1;
 
-        // Controle de Sessão
         auth.onAuthStateChanged((user) => {
             if (user) {
                 document.getElementById('login-card').style.display = 'none';
@@ -489,285 +418,333 @@
             }
         });
 
-        // Login
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const senha = document.getElementById('senha-unica').value;
             const errorDiv = document.getElementById('login-error');
-            const btnEntrar = document.getElementById('btn-entrar');
-
+            const btn = document.getElementById('btn-entrar');
             errorDiv.style.display = 'none';
-            btnEntrar.textContent = 'Verificando...';
-            btnEntrar.disabled = true;
-
+            btn.textContent = 'AUTENTICANDO...';
+            btn.disabled = true;
             try {
                 await auth.signInWithEmailAndPassword(SYSTEM_EMAIL, senha);
-            } catch (error) {
-                errorDiv.textContent = "Senha incorreta ou usuário não configurado.";
+            } catch (err) {
+                errorDiv.textContent = "SENHA INCORRETA OU ERRO DE CONEXÃO.";
                 errorDiv.style.display = 'block';
-                btnEntrar.textContent = 'Entrar';
-                btnEntrar.disabled = false;
+                btn.textContent = 'ENTRAR NO SISTEMA';
+                btn.disabled = false;
             }
         });
 
-        // Logout
         document.getElementById('btn-logout').addEventListener('click', async () => {
             await auth.signOut();
-            document.getElementById('senha-unica').value = '';
         });
 
-        // Navegação por Abas
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
-            
-            if (tabName === 'os') {
-                document.getElementById('tab-os').classList.add('active');
-            } else if (tabName === 'clientes') {
-                document.getElementById('tab-clientes').classList.add('active');
-            } else if (tabName === 'financeiro') {
-                document.getElementById('tab-financeiro').classList.add('active');
-            }
+            document.getElementById('tab-' + tabName).classList.add('active');
             event.target.classList.add('active');
         }
 
-        // Módulo de Dentistas
+        // DENTISTAS
         const dentistaForm = document.getElementById('dentista-form');
-        const tabelaDentistasBody = document.querySelector('#tabela-dentistas tbody');
-        const selectDentistaOS = document.getElementById('os-dentista');
-
         dentistaForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btnSalvar = document.getElementById('btn-salvar-cli');
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = 'SALVANDO...';
+
             const id = document.getElementById('dentista-id').value;
-            const nome = document.getElementById('nome').value;
-            const cro = document.getElementById('cro').value;
-            const telefone = document.getElementById('telefone').value;
-            const endereco = document.getElementById('endereco').value;
-
-            const dadosDentista = { nome, cro, telefone, endereco };
-
+            const dados = {
+                nome: document.getElementById('nome').value.toUpperCase(),
+                cro: document.getElementById('cro').value.toUpperCase(),
+                telefone: document.getElementById('telefone').value.toUpperCase(),
+                endereco: document.getElementById('endereco').value.toUpperCase()
+            };
             try {
                 if (id) {
-                    await db.collection('dentistas').doc(id).update(dadosDentista);
+                    await db.collection('dentistas').doc(id).update(dados);
                 } else {
-                    dadosDentista.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('dentistas').add(dadosDentista);
+                    dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('dentistas').add(dados);
                 }
-                limparFormularioDentista();
+                limparCLI();
                 carregarDentistas();
-            } catch (error) {
-                alert("Erro ao salvar dentista: " + error.message);
+            } catch(err) { 
+                alert("ERRO AO SALVAR: " + err.message); 
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = id ? 'ATUALIZAR' : 'SALVAR DENTISTA';
             }
         });
 
         function carregarDentistas() {
-            db.collection('dentistas').orderBy('nome').onSnapshot((snapshot) => {
-                tabelaDentistasBody.innerHTML = '';
-                selectDentistaOS.innerHTML = `<option value="">Selecione o dentista...</option>`;
-                listaDentistasCache = [];
+            db.collection('dentistas').orderBy('nome').onSnapshot(snap => {
+                const tbody = document.querySelector('#tabela-dentistas tbody');
+                tbody.innerHTML = '';
+                cacheDentistas = [];
+                const selOS = document.getElementById('os-dentista');
+                const selOrc = document.getElementById('orc-dentista');
+                selOS.innerHTML = '<option value="">SELECIONE...</option>';
+                selOrc.innerHTML = '<option value="">SELECIONE...</option>';
 
-                if (snapshot.empty) {
-                    tabelaDentistasBody.innerHTML = `<tr><td colspan="3" style="text-align: center;">Nenhum dentista cadastrado.</td></tr>`;
+                if (snap.empty) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center;">NENHUM DENTISTA CADASTRADO.</td></tr>`;
+                    document.getElementById('dash-cli').textContent = '0';
                     return;
                 }
 
-                snapshot.forEach((doc) => {
+                document.getElementById('dash-cli').textContent = snap.size;
+                snap.forEach(doc => {
                     const d = doc.data();
-                    listaDentistasCache.push({ id: doc.id, nome: d.nome });
-
-                    const opt = document.createElement('option');
-                    opt.value = doc.id;
-                    opt.textContent = `${d.nome} (${d.cro})`;
-                    selectDentistaOS.appendChild(opt);
+                    cacheDentistas.push({ id: doc.id, nome: d.nome });
+                    
+                    [selOS, selOrc].forEach(sel => {
+                        const opt = document.createElement('option');
+                        opt.value = doc.id; opt.textContent = `${d.nome} (${d.cro})`;
+                        sel.appendChild(opt);
+                    });
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>${d.nome}</strong><br><small style="color: #64748b;">${d.cro}</small></td>
-                        <td>${d.telefone || '-'}<br><small style="color: #64748b;">${d.endereco || ''}</small></td>
-                        <td>
-                            <div class="action-btns">
-                                <button onclick="editarDentista('${doc.id}', '${d.nome}', '${d.cro}', '${d.telefone || ''}', '${d.endereco || ''}')">Editar</button>
-                                <button class="btn-danger" onclick="excluirDentista('${doc.id}')">Excluir</button>
-                            </div>
-                        </td>
+                        <td><strong>${d.nome}</strong><br><small style="color:var(--text-light);">${d.cro}</small></td>
+                        <td>${d.telefone || '-'}<br><small style="color:var(--text-light);">${d.endereco || ''}</small></td>
+                        <td><div class="action-btns">
+                            <button type="button" onclick="editarCLI('${doc.id}', '${d.nome}', '${d.cro}', '${d.telefone || ''}', '${d.endereco || ''}')">EDITAR</button>
+                            <button type="button" class="btn-danger" onclick="excluirCLI('${doc.id}')">EXCLUIR</button>
+                        </div></td>
                     `;
-                    tabelaDentistasBody.appendChild(tr);
+                    tbody.appendChild(tr);
                 });
             });
         }
 
-        function editarDentista(id, nome, cro, telefone, endereco) {
+        window.editarCLI = function(id, nome, cro, telefone, endereco) {
             document.getElementById('dentista-id').value = id;
             document.getElementById('nome').value = nome;
             document.getElementById('cro').value = cro;
             document.getElementById('telefone').value = telefone;
             document.getElementById('endereco').value = endereco;
-            document.getElementById('form-title').textContent = 'Editar Dentista';
-            document.getElementById('btn-salvar-dentista').textContent = 'Atualizar';
-            document.getElementById('btn-cancelar-edicao').style.display = 'block';
+            document.getElementById('cli-form-title').textContent = 'EDITAR DENTISTA';
+            document.getElementById('btn-salvar-cli').textContent = 'ATUALIZAR';
+            document.getElementById('btn-cancelar-cli').style.display = 'block';
         }
 
-        function limparFormularioDentista() {
+        function limparCLI() {
             dentistaForm.reset();
             document.getElementById('dentista-id').value = '';
-            document.getElementById('form-title').textContent = 'Novo Dentista';
-            document.getElementById('btn-salvar-dentista').textContent = 'Salvar';
-            document.getElementById('btn-cancelar-edicao').style.display = 'none';
+            document.getElementById('cli-form-title').textContent = 'NOVO DENTISTA';
+            document.getElementById('btn-salvar-cli').textContent = 'SALVAR DENTISTA';
+            document.getElementById('btn-cancelar-cli').style.display = 'none';
         }
 
-        async function excluirDentista(id) {
-            if (confirm('Deseja realmente excluir este dentista?')) {
-                try {
-                    await db.collection('dentistas').doc(id).delete();
-                } catch (error) {
-                    alert('Erro ao excluir: ' + error.message);
-                }
-            }
+        window.excluirCLI = async function(id) {
+            if(confirm('EXCLUIR ESTE DENTISTA?')) await db.collection('dentistas').doc(id).delete();
         }
 
-        // Módulo de Ordens de Serviço (OS)
+        // ORDENS DE SERVIÇO
         const osForm = document.getElementById('os-form');
-        const tabelaOSBody = document.querySelector('#tabela-os tbody');
-
         osForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('os-id').value;
-            const numero = document.getElementById('os-numero').value;
-            const dentistaId = document.getElementById('os-dentista').value;
-            const dentistaObj = listaDentistasCache.find(d => d.id === dentistaId);
-            const paciente = document.getElementById('os-paciente').value;
-            const tipo = document.getElementById('os-tipo').value;
-            const cor = document.getElementById('os-cor').value;
-            const valor = parseFloat(document.getElementById('os-valor').value) || 0;
-            const pagamento = document.getElementById('os-pagamento').value;
-            const status = document.getElementById('os-status').value;
-            const previsao = document.getElementById('os-previsao').value;
-            const obs = document.getElementById('os-obs').value;
+            const btnSalvarOS = document.getElementById('btn-salvar-os');
+            btnSalvarOS.disabled = true;
+            btnSalvarOS.textContent = 'SALVANDO...';
 
-            const dadosOS = {
-                numero,
+            const id = document.getElementById('os-id').value;
+            const dentistaId = document.getElementById('os-dentista').value;
+            const dentistaObj = cacheDentistas.find(d => d.id === dentistaId);
+            const numeroOS = document.getElementById('os-numero').value;
+            
+            const dados = {
+                numero: numeroOS,
                 dentistaId,
-                dentistaNome: dentistaObj ? dentistaObj.nome : 'Desconhecido',
-                paciente,
-                tipo,
-                cor,
-                valor,
-                pagamento,
-                status,
-                previsao,
-                obs
+                dentistaNome: dentistaObj ? dentistaObj.nome : 'DESCONHECIDO',
+                paciente: document.getElementById('os-paciente').value.toUpperCase(),
+                tipo: document.getElementById('os-tipo').value.toUpperCase(),
+                cor: document.getElementById('os-cor').value.toUpperCase(),
+                valor: parseFloat(document.getElementById('os-valor').value) || 0,
+                pagamento: document.getElementById('os-pagamento').value.toUpperCase(),
+                status: document.getElementById('os-status').value.toUpperCase(),
+                previsao: document.getElementById('os-previsao').value,
+                obs: document.getElementById('os-obs').value.toUpperCase()
             };
 
             try {
                 if (id) {
-                    await db.collection('ordens_servico').doc(id).update(dadosOS);
+                    await db.collection('ordens_servico').doc(id).update(dados);
                 } else {
-                    dadosOS.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('ordens_servico').add(dadosOS);
+                    dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('ordens_servico').add(dados);
                 }
-                limparFormularioOS();
+                limparOS();
                 carregarOS();
-            } catch (error) {
-                alert("Erro ao salvar OS: " + error.message);
+            } catch(err) { 
+                alert("ERRO AO SALVAR OS: " + err.message); 
+            } finally {
+                btnSalvarOS.disabled = false;
+                btnSalvarOS.textContent = id ? 'ATUALIZAR OS' : 'SALVAR OS';
             }
         });
 
         function carregarOS() {
-            db.collection('ordens_servico').orderBy('criadoEm', 'desc').onSnapshot((snapshot) => {
-                tabelaOSBody.innerHTML = '';
-                let faturamentoTotal = 0;
-                let pendenteTotal = 0;
-                let ativasTotal = 0;
+            db.collection('ordens_servico').orderBy('criadoEm', 'desc').onSnapshot(snap => {
+                const tbody = document.querySelector('#tabela-os tbody');
+                const tbodyFin = document.querySelector('#tabela-financeiro tbody');
+                tbody.innerHTML = '';
+                tbodyFin.innerHTML = '';
 
-                if (snapshot.empty) {
-                    tabelaOSBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">Nenhuma OS cadastrada.</td></tr>`;
-                    atualizarFinanceiro(0, 0, 0);
+                let fat = 0, pend = 0, ativas = 0, pago = 0;
+                let maiorNum = 0;
+
+                if (snap.empty) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">NENHUMA OS REGISTRADA.</td></tr>`;
+                    tbodyFin.innerHTML = `<tr><td colspan="4" style="text-align: center;">NENHUM REGISTRO FINANCEIRO.</td></tr>`;
+                    atualizarFinanceiroEStats(0, 0, 0, 0);
+                    proximoNumeroOS = 1;
+                    document.getElementById('os-numero').value = '001/2026';
                     return;
                 }
 
-                snapshot.forEach((doc) => {
+                snap.forEach(doc => {
                     const os = doc.data();
-                    
-                    faturamentoTotal += os.valor || 0;
-                    if (os.pagamento === 'Pendente') pendenteTotal += os.valor || 0;
-                    if (os.status !== 'Entregue') ativasTotal++;
+                    fat += os.valor || 0;
+                    if (os.pagamento === 'PENDENTE') pend += os.valor || 0;
+                    else pago += os.valor || 0;
+                    if (os.status !== 'ENTREGUE') ativas++;
 
-                    const badgeStatusClass = getBadgeClass(os.status);
-                    const badgePagamentoClass = os.pagamento === 'Pago' ? 'badge-pago' : 'badge-pendente';
+                    // Descobrir maior número para autoincremento
+                    if (os.numero) {
+                        const partes = os.numero.split('/');
+                        const numInt = parseInt(partes[0]) || 0;
+                        if (numInt > maiorNum) maiorNum = numInt;
+                    }
 
+                    const badgeSt = getBadge(os.status);
+                    const badgePg = os.pagamento === 'PAGO' ? 'badge-pago' : 'badge-pendente';
+
+                    // Tabela OS
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>OS: ${os.numero}</strong><br><small>Paciente: ${os.paciente}</small></td>
+                        <td><strong>OS: ${os.numero}</strong><br><small>PAC: ${os.paciente}</small></td>
                         <td>${os.dentistaNome}</td>
-                        <td>${os.tipo}<br><small style="color: #64748b;">Previsão: ${os.previsao || '-'}</small></td>
-                        <td>
-                            <span class="badge ${badgeStatusClass}">${os.status}</span><br>
-                            <span class="badge ${badgePagamentoClass}" style="margin-top: 2px;">R$ ${os.valor.toFixed(2)} (${os.pagamento})</span>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <button onclick="editarOS('${doc.id}', '${os.numero}', '${os.dentistaId}', '${os.paciente}', '${os.tipo}', '${os.cor || ''}', ${os.valor}, '${os.pagamento}', '${os.status}', '${os.previsao}', '${os.obs || ''}')">Editar</button>
-                                <button class="btn-danger" onclick="excluirOS('${doc.id}')">Excluir</button>
-                            </div>
-                        </td>
+                        <td>${os.tipo}<br><small style="color:var(--text-light);">PREV: ${os.previsao || '-'}</small></td>
+                        <td><span class="badge ${badgeSt}">${os.status}</span><br><span class="badge ${badgePg}" style="margin-top:2px;">R$ ${os.valor.toFixed(2)} (${os.pagamento})</span></td>
+                        <td><div class="action-btns">
+                            <button type="button" onclick="editarOS('${doc.id}', '${os.numero}', '${os.dentistaId}', '${os.paciente}', '${os.tipo}', '${os.cor || ''}', ${os.valor}, '${os.pagamento}', '${os.status}', '${os.previsao}', '${os.obs || ''}')">EDITAR</button>
+                            <button type="button" class="btn-danger" onclick="excluirOS('${doc.id}')">EXCLUIR</button>
+                        </div></td>
                     `;
-                    tabelaOSBody.appendChild(tr);
+                    tbody.appendChild(tr);
+
+                    // Tabela Financeiro
+                    const trFin = document.createElement('tr');
+                    trFin.innerHTML = `
+                        <td><strong>OS: ${os.numero}</strong> - ${os.paciente}</td>
+                        <td>${os.dentistaNome}</td>
+                        <td><strong>R$ ${os.valor.toFixed(2)}</strong></td>
+                        <td><span class="badge ${badgePg}">${os.pagamento}</span></td>
+                    `;
+                    tbodyFin.appendChild(trFin);
                 });
 
-                atualizarFinanceiro(faturamentoTotal, pendenteTotal, ativasTotal);
+                atualizarFinanceiroEStats(fat, pend, ativas, pago);
+
+                // Definir próximo número automático se não estiver editando
+                if (!document.getElementById('os-id').value) {
+                    const proximo = maiorNum + 1;
+                    const anoAtual = new Date().getFullYear();
+                    document.getElementById('os-numero').value = String(proximo).padStart(3, '0') + '/' + anoAtual;
+                }
             });
         }
 
-        function getBadgeClass(status) {
-            switch(status) {
-                case 'Recebido': return 'badge-recebido';
-                case 'Em Prova': return 'badge-prova';
-                case 'Em Acabamento': return 'badge-acabamento';
-                case 'Concluído': return 'badge-concluido';
-                case 'Entregue': return 'badge-entregue';
-                default: return 'badge-recebido';
-            }
+        function getBadge(st) {
+            if(st === 'RECEBIDO') return 'badge-recebido';
+            if(st === 'EM PROVA') return 'badge-prova';
+            if(st === 'EM ACABAMENTO') return 'badge-acabamento';
+            if(st === 'CONCLUÍDO') return 'badge-concluido';
+            return 'badge-entregue';
         }
 
-        function editarOS(id, numero, dentistaId, paciente, tipo, cor, valor, pagamento, status, previsao, obs) {
+        window.editarOS = function(id, num, dentId, pac, tipo, cor, val, pg, st, prev, obs) {
             document.getElementById('os-id').value = id;
-            document.getElementById('os-numero').value = numero;
-            document.getElementById('os-dentista').value = dentistaId;
-            document.getElementById('os-paciente').value = paciente;
+            document.getElementById('os-numero').value = num;
+            document.getElementById('os-dentista').value = dentId;
+            document.getElementById('os-paciente').value = pac;
             document.getElementById('os-tipo').value = tipo;
             document.getElementById('os-cor').value = cor;
-            document.getElementById('os-valor').value = valor;
-            document.getElementById('os-pagamento').value = pagamento;
-            document.getElementById('os-status').value = status;
-            document.getElementById('os-previsao').value = previsao;
+            document.getElementById('os-valor').value = val;
+            document.getElementById('os-pagamento').value = pg;
+            document.getElementById('os-status').value = st;
+            document.getElementById('os-previsao').value = prev;
             document.getElementById('os-obs').value = obs;
-            document.getElementById('os-form-title').textContent = 'Editar Ordem de Serviço';
-            document.getElementById('btn-salvar-os').textContent = 'Atualizar OS';
+            document.getElementById('os-form-title').textContent = 'EDITAR ORDEM DE SERVIÇO';
+            document.getElementById('btn-salvar-os').textContent = 'ATUALIZAR OS';
             document.getElementById('btn-cancelar-os').style.display = 'block';
         }
 
-        function limparFormularioOS() {
+        function limparOS() {
             osForm.reset();
             document.getElementById('os-id').value = '';
-            document.getElementById('os-form-title').textContent = 'Nova Ordem de Serviço';
-            document.getElementById('btn-salvar-os').textContent = 'Salvar OS';
+            document.getElementById('os-form-title').textContent = 'NOVA ORdem de SERVIÇO';
+            document.getElementById('btn-salvar-os').textContent = 'SALVAR OS';
             document.getElementById('btn-cancelar-os').style.display = 'none';
+            
+            // Recriar número automático
+            db.collection('ordens_servico').get().then(snap => {
+                let maiorNum = 0;
+                snap.forEach(doc => {
+                    const os = doc.data();
+                    if(os.numero) {
+                        const partes = os.numero.split('/');
+                        const numInt = parseInt(partes[0]) || 0;
+                        if(numInt > maiorNum) maiorNum = numInt;
+                    }
+                });
+                const proximo = maiorNum + 1;
+                const anoAtual = new Date().getFullYear();
+                document.getElementById('os-numero').value = String(proximo).padStart(3, '0') + '/' + anoAtual;
+            });
         }
 
-        async function excluirOS(id) {
-            if (confirm('Deseja realmente excluir esta OS?')) {
-                try {
-                    await db.collection('ordens_servico').doc(id).delete();
-                } catch (error) {
-                    alert('Erro ao excluir OS: ' + error.message);
-                }
+        window.excluirOS = async function(id) {
+            if(confirm('EXCLUIR ESTA OS?')) await db.collection('ordens_servico').doc(id).delete();
+        }
+
+        function atualizarFinanceiroEStats(fat, pend, ativas, pago) {
+            document.getElementById('dash-fat').textContent = `R$ ${fat.toFixed(2)}`;
+            document.getElementById('dash-pend').textContent = `R$ ${pend.toFixed(2)}`;
+            document.getElementById('dash-ativas').textContent = ativas;
+
+            document.getElementById('fin-fat').textContent = `R$ ${fat.toFixed(2)}`;
+            document.getElementById('fin-pago').textContent = `R$ ${pago.toFixed(2)}`;
+            document.getElementById('fin-pend').textContent = `R$ ${pend.toFixed(2)}`;
+        }
+
+        // ORÇAMENTO
+        window.gerarOrcamentoVisual = function() {
+            const dentId = document.getElementById('orc-dentista').value;
+            const dentObj = cacheDentistas.find(d => d.id === dentId);
+            const pac = document.getElementById('orc-paciente').value.toUpperCase();
+            const desc = document.getElementById('orc-descricao').value.toUpperCase();
+            const val = parseFloat(document.getElementById('orc-valor').value) || 0;
+            const validez = document.getElementById('orc-validade').value;
+
+            if(!dentObj || !pac || !desc) {
+                alert('PREENCHA TODOS OS CAMPOS DO ORÇAMENTO.');
+                return;
             }
-        }
 
-        function atualizarFinanceiro(fat, pend, ativ) {
-            document.getElementById('stat-faturamento').textContent = `R$ ${fat.toFixed(2)}`;
-            document.getElementById('stat-pendente').textContent = `R$ ${pend.toFixed(2)}`;
-            document.getElementById('stat-ativas').textContent = ativ;
+            document.getElementById('view-orc-dentista').textContent = dentObj.nome;
+            document.getElementById('view-orc-paciente').textContent = pac;
+            document.getElementById('view-orc-data').textContent = new Date().toLocaleDateString('pt-BR');
+            document.getElementById('view-orc-validade').textContent = validez;
+            document.getElementById('view-orc-desc').textContent = desc;
+            document.getElementById('view-orc-val').textContent = `R$ ${val.toFixed(2)}`;
+            document.getElementById('view-orc-total').textContent = `R$ ${val.toFixed(2)}`;
+            
+            alert('ORÇAMENTO GERADO COM SUCESSO! CLIQUE EM IMPRIMIR PARA GERAR O PDF.');
         }
     </script>
 </body>
